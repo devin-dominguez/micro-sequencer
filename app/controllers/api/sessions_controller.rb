@@ -8,7 +8,7 @@ class Api::SessionsController < ApplicationController
     if user
       log_in!(user)
     else
-      render json: {error: "User Not Found"}
+      render json: {error: "User Not Found"}, status: :unprocessable_entity
     end
   end
 
