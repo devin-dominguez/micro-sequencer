@@ -11,7 +11,7 @@
 <!-- This is a Markdown checklist. Use it to keep track of your
 progress. Put an x between the brackets for a checkmark: [x] -->
 
-- [ ] Create an account
+- [x] Create an account
 - [ ] Log in / Log out
 - [ ] Create, play, edit, and delete musical compositions
 - [ ] Browse other user's compositions

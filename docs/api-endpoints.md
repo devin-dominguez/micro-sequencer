@@ -4,14 +4,12 @@
 
 ### Users
 
-- `GET /api/users/new`
 - `POST /api/users`
 - `PATCH /api/users`
 
 ### Session
 
-- `GET /api/session/new`
-- `POST /apisession`
+- `POST /api/session`
 - `DELETE /api/session`
 
 ### Compositions

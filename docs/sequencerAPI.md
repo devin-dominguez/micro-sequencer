@@ -109,11 +109,14 @@ NONE
   - `notes[<Note>]`
 
 #### Interface
-  - `addNote(noteParams): Note`
+  - `insertNote(noteParams): Note`
   - `removeNote(noteParams): Note`
-  - `transposeNote(noteParams, pitch): Note`
-  - `translateNote(noteParams, position): Note`
-  - `resizeNote(noteParams, duration): Note`
+  - `transposeNoteTo(noteParams, pitch): Note`
+  - `transposeNoteBy(noteParams, offset): Note`
+  - `translateNoteTo(noteParams, position): Note`
+  - `translateNoteBy(noteParams, offet): Note`
+  - `resizeNoteTo(noteParams, duration): Note`
+  - `resizeNoteBy(noteParams, offset): Note`
   - `moveNoteTo(noteParams, pitch, position): Note`
   - `copyNoteTo(noteParams, pitch, position): Note`
 
