@@ -22,6 +22,13 @@ var Cell = React.createClass({
     }
   },
 
+  shouldComponentUpdate: function(nextProps, nextState) {
+    if (this.props.note === nextProps.note) {
+      return false;
+    }
+    return true;
+  },
+
   render: function() {
     var className = "matrix-cell " + this.props.type;
     if (this.props.note && this.props.note.duration === 1) {
