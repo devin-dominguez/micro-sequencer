@@ -1,12 +1,24 @@
 window.SessionStore = require('./stores/sessionStore');
-window.SessionActions = require('./actions/sessionActions');
+var SessionActions = require('./actions/sessionActions');
+window.SessionActions = SessionActions;
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+var Router = require('react-router').Router;
+var Route = require('react-router').Route;
+var App = require('./components/app');
+var SessionModal = require('./components/session/sessionModal');
+
+var routes = (
+  <Route component={App} path="/">
+    <Route component={SessionModal} path="login" />
+  </Route>
+);
 
 
 $(function() {
-  var contentElement = $("content")[0];
+  SessionActions.recieveCurrentUser();
+  var contentElement = $("#content")[0];
 
-  ReactDOM.render(<h1>Yo</h1>, contentElement);
+  ReactDOM.render(<Router>{routes}</Router>, contentElement);
 });

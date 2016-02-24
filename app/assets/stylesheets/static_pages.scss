@@ -1,3 +1,61 @@
 // Place all the styles related to the static_pages controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import 'variables';
+@import 'reset';
+@import 'header';
+@import 'modal';
+@import 'session';
+
+body {
+  background: $bg-color;
+  color: white;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: $fg-color;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.footer {
+  border-top: 1px solid $fg-color;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.editor {
+  flex: 1;
+}
+
+.button {
+  border: 1px solid $fg-color;
+  border-radius: 4px;
+  color: $fg-color;
+  width: 64px;
+  background: none;
+  height: 32px;
+
+  transition: color 250ms, background-color 250ms;
+
+  &:hover {
+    cursor: pointer;
+    color: $bg-color;
+    background: $fg-color;
+  }
+}

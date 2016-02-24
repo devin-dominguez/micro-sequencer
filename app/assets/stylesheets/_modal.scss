@@ -1,0 +1,25 @@
+@import 'variables';
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-screen {
+  background: rgba($bg-color * 0.25, 0.75);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+}
+
+.modal-content {
+  margin-top: 80px;
+  background: $bg-color;
+  border-radius: 4px;
+  z-index: 1000;
+}
+

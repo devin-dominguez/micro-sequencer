@@ -1,0 +1,57 @@
+@import 'variables';
+
+.session-content {
+  width: 280px;
+  padding: 25px;
+
+  text-align: center;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    margin-top: 15px;
+    width: 100%;
+
+    input {
+      margin-top: 5px;
+    }
+
+  }
+
+}
+
+.session-buttons {
+  width: 100%;
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.swap-text {
+  font-size: 10px;
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+.error-list {
+  width: 100%;
+  margin: 15px 0;
+  background-color: $error-color;
+}
+
+.error {
+  font-size: 12px;
+  padding: 5px;
+}

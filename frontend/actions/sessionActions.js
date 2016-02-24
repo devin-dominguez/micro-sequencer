@@ -1,10 +1,10 @@
 var Dispatcher = require('../dispatcher/dispatcher');
 var SessionConstants = require('../constants/sessionConstants');
 
-function failure(error) {
+function failure(errors) {
   var failureAction = {
     actionType: SessionConstants.SESSION_ERROR,
-    error: error.responseJSON
+    errors: errors.responseJSON
   };
   Dispatcher.dispatch(failureAction);
 }
@@ -61,5 +61,24 @@ module.exports = {
     };
 
     $.ajax(ajaxOptions);
+  },
+
+  recieveCurrentUser: function() {
+    var ajaxOptions = {
+      url: "api/session/current",
+      type: "GET",
+      success: function(user) {
+        var successAction = {
+          actionType: SessionConstants.CURRENT_USER,
+          user: user
+        };
+      Dispatcher.dispatch(successAction);
+      },
+      error: failure
+    };
+
+    $.ajax(ajaxOptions);
   }
+
+
 };
