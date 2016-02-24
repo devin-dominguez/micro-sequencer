@@ -72,11 +72,6 @@ var SessionForm = React.createClass({
     }
   },
 
-
-  componentWillReceiveProps: function(nextProps) {
-    console.log("!", nextProps);
-  },
-
   render: function() {
     var titleText = this.state.sessionType === "login" ? "Log In" : "Sign Up";
     var swapText = this.state.sessionType === "login" ?

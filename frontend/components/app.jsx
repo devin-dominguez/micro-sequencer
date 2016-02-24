@@ -2,6 +2,7 @@ var React = require('react');
 
 var Header = require('./header/header');
 var Footer = require('./footer');
+var PianoRoll = require('./editor/pianoRoll');
 var App = React.createClass({
 
   render: function() {
@@ -9,7 +10,9 @@ var App = React.createClass({
       <div className="app">
       <Header />
       {this.props.children}
-      <div className="editor"></div>
+      <div className="editor">
+        <PianoRoll />
+      </div>
       <Footer />
       </div>
     );

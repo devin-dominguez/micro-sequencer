@@ -1,0 +1,47 @@
+@import 'variables';
+
+.piano-roll {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.matrix {
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  height: 600px;
+  overflow: scroll;
+
+  li:first-child .matrix-cell {
+    border-top: thin solid $grid-color;
+  }
+}
+
+
+.matrix-row {
+  display: flex;
+}
+
+.matrix-cell {
+  border-right: thin solid $grid-color;
+  border-bottom: thin solid $grid-color;
+  min-width: 16px;
+  min-height: 12px;
+
+  &:first-child {
+    border-left: thin solid $grid-color;
+  }
+}
+
+.note-on, .note-continue, .note-off {
+  background-color: $note-color;
+}
+
+.note-on, .note-continue {
+  border-right: thin solid $note-color;
+}
+
+.note-off {
+  border-right: thin solid $grid-color;
+}

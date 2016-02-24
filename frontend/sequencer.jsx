@@ -1,6 +1,10 @@
 window.SessionStore = require('./stores/sessionStore');
 var SessionActions = require('./actions/sessionActions');
+var History = require('react-router').hashHistory;
 window.SessionActions = SessionActions;
+
+window.EditorStore = require('./stores/editorStore');
+window.EditorActions = require('./actions/editorActions');
 
 var React = require('react');
 var ReactDOM = require('react-dom');
@@ -20,5 +24,5 @@ $(function() {
   SessionActions.recieveCurrentUser();
   var contentElement = $("#content")[0];
 
-  ReactDOM.render(<Router>{routes}</Router>, contentElement);
+  ReactDOM.render(<Router history={History}>{routes}</Router>, contentElement);
 });
