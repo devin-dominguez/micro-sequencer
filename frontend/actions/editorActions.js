@@ -29,5 +29,13 @@ module.exports = {
       pitch: pitch,
       position: position
     });
+  },
+
+  resizeNoteTo: function(noteParams, duration) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.REISZE_NOTE_TO,
+      noteParams: noteParams,
+      duration: duration
+    });
   }
 };

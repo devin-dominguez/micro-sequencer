@@ -28,6 +28,11 @@ EditorStore.__onDispatch = function(payload) {
       phrase.moveNoteTo(payload.noteParams, payload.pitch, payload.position);
       this.__emitChange();
       break;
+
+    case EditorConstants.REISZE_NOTE_TO:
+      phrase.resizeNoteTo(payload.noteParams, payload.duration);
+      this.__emitChange();
+      break;
   }
 };
 

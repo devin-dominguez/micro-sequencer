@@ -35,9 +35,8 @@
 .matrix-cell {
   border-right: thin solid $grid-color;
   border-bottom: thin solid $grid-color;
-  min-width: 24px;
-  min-height: 12px;
-
+  width: 24px;
+  height: 12px;
   display: flex;
 
   &:first-child {

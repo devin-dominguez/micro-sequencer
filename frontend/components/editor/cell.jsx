@@ -39,26 +39,42 @@ var Cell = React.createClass({
 
         <div className="note-tail"
           key="2"
-          draggable="true" />
+          draggable="true"
+          onDragStart={this.resizeDrag}/>
       ];
     }
   },
 
   moveDrag: function(e) {
-    var data = JSON.stringify(this.props.note);
-    e.dataTransfer.setData('text', data);
+    var data = this.props.note;
+    data.action = "move";
+    e.dataTransfer.setData("note", JSON.stringify(data));
+  },
+
+  resizeDrag: function(e) {
+    var data = this.props.note;
+    data.action = "resize";
+    e.dataTransfer.setData("note", JSON.stringify(data));
+
   },
 
   moveDrop: function(e) {
     e.preventDefault();
-    var noteParams = JSON.parse(e.dataTransfer.getData("text"));
-    var pitch = this.props.pitch;
-    var position = this.props.position;
-
-    EditorActions.moveNoteTo(noteParams, pitch, position);
+    var data = e.dataTransfer.getData("note");
+    if (data) {
+      var note = JSON.parse(data);
+      var pitch = this.props.pitch;
+      var position = this.props.position;
+      if (note.action === "move") {
+        EditorActions.moveNoteTo(note, pitch, position);
+      } else if (note.action === "resize") {
+        var newDuration = position - note.position + 1;
+        EditorActions.resizeNoteTo(note, newDuration);
+      }
+    }
   },
 
-  moveDragEnter: function(e) {
+  moveDragOver: function(e) {
     e.preventDefault();
   },
 
@@ -71,7 +87,7 @@ var Cell = React.createClass({
       <li onClick={this.onClick}
       onDoubleClick={this.onDoubleClick}
       onDrop={this.moveDrop}
-      onDragOver={this.moveDragEnter}
+      onDragOver={this.moveDragOver}
       className={className}>
         {this.noteBody()}
       </li>
