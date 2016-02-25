@@ -13,7 +13,7 @@ function Phrase(params) {
 }
 
 Phrase.prototype._setupChildren = function() {
-  this.notes.map(function(note) {
+  this.notes = this.notes.map(function(note) {
     return new Note(note);
   });
 };

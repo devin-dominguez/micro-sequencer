@@ -9,8 +9,8 @@
 .matrix {
   display: flex;
   flex-direction: column;
-  width: 800px;
-  height: 600px;
+  max-width: 800px;
+  max-height: 600px;
   overflow: scroll;
 
   li:first-child .matrix-cell {
@@ -35,8 +35,10 @@
 .matrix-cell {
   border-right: thin solid $grid-color;
   border-bottom: thin solid $grid-color;
-  min-width: 16px;
+  min-width: 24px;
   min-height: 12px;
+
+  display: flex;
 
   &:first-child {
     border-left: thin solid $grid-color;
@@ -49,8 +51,32 @@
 
 .note-on, .note-continue {
   border-right: thin solid $note-color;
+
+}
+
+.note-continue {
+  .note-tail {
+    display: none;
+  }
+}
+
+.note-body {
+  flex: 1;
+  &:hover {
+    cursor: crosshair;
+  }
 }
 
 .note-off {
   border-right: thin solid $grid-color;
+
+  .note-tail {
+    width: 25%;
+    background-color: $note-color * 1.5;
+
+    &:hover {
+      cursor: col-resize;
+    }
+  }
 }
+

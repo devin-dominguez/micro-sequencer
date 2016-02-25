@@ -3,7 +3,7 @@ var Store = require('flux/utils').Store;
 var Phrase = require('../seqApi/phrase');
 var EditorConstants = require('../constants/editorConstants');
 
-var phrase = new Phrase({length: 64});
+var phrase = new Phrase({length: 16});
 
 var EditorStore = new Store(Dispatcher);
 
@@ -21,6 +21,11 @@ EditorStore.__onDispatch = function(payload) {
 
     case EditorConstants.REMOVE_NOTE:
       phrase.removeNote(payload.noteParams);
+      this.__emitChange();
+      break;
+
+    case EditorConstants.MOVE_NOTE_TO:
+      phrase.moveNoteTo(payload.noteParams, payload.pitch, payload.position);
       this.__emitChange();
       break;
   }

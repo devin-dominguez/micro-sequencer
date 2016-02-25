@@ -20,5 +20,14 @@ module.exports = {
       actionType: EditorConstants.REMOVE_NOTE,
       noteParams: noteParams
     });
+  },
+
+  moveNoteTo: function(noteParams, pitch, position) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.MOVE_NOTE_TO,
+      noteParams: noteParams,
+      pitch: pitch,
+      position: position
+    });
   }
 };
