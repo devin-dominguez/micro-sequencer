@@ -56,6 +56,10 @@
 .note {
   position: relative;
   display: flex;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .note-body {
@@ -66,4 +70,8 @@
 .note-tail {
   width: 8px;
   background-color: rgba($note-color, 0.5);
+
+  &:hover {
+    cursor: ew-resize;
+  }
 }

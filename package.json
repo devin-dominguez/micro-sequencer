@@ -29,6 +29,7 @@
     "react": "^0.14.7",
     "react-addons-linked-state-mixin": "^0.14.7",
     "react-dom": "^0.14.7",
+    "react-dragula": "^1.1.14",
     "react-router": "^2.0.0",
     "webpack": "^1.12.14"
   }
