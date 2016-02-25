@@ -9,7 +9,6 @@ var PianoRoll = React.createClass({
       phrase: EditorStore.phrase()
     };
   },
-
   componentWillMount: function() {
     this.listener = EditorStore.addListener(this.onChange);
   },
@@ -19,74 +18,35 @@ var PianoRoll = React.createClass({
   },
 
   onChange: function() {
-    this.setState({
+    this. setState({
       phrase: EditorStore.phrase()
     });
   },
 
-  buildRow: function(pitch) {
-    var row = [];
-    var notesForRow = {};
-    this.state.phrase.notes.forEach(function(note) {
-      if (note.pitch === pitch) {
-        notesForRow[note.position] = note;
-      }
-    });
-
-    for (var tick = 0; tick < this.state.phrase.length; tick++) {
-      var note = notesForRow[tick];
-      if (note) {
-        row[tick] = (<Cell note={note}
-            key={tick}
-            type="note-on"
-            pitch={pitch}
-            position={tick} />);
-
-        var duration = note.duration - 1;
-
-        while (duration > 1) {
-          row[++tick] = (<Cell note={note}
-            key={tick}
-            type="note-continue"
-            pitch={pitch}
-            position={tick} />);
-          duration--;
-        }
-
-        if (duration === 1) {
-        row[++tick] = (<Cell note={note}
-          key={tick}
-          type="note-off"
-          pitch={pitch}
-          position={tick} />);
-        }
-
-      } else {
-        row[tick] = (<Cell note={null}
-          key={tick}
-          type="null"
-          pitch={pitch}
-          position={tick} />);
+  matrix: function() {
+    var rows = [];
+    for (var pitch = SeqConfig.MIN_PITCH; pitch <= SeqConfig.MAX_PITCH; pitch++) {
+      rows[pitch] = [];
+      for (var tick = 0; tick < this.state.phrase.length; tick++) {
+        rows[pitch][tick] = ( <Cell key={tick} position={tick} pitch={pitch} /> );
       }
     }
-
-    return <ul className={"matrix-row"} >{row}</ul>;
+    return (
+      rows.reverse().map(function(row, i) {
+        return <ul key={i} className="matrix-row">{row}</ul> ;
+      })
+    );
   },
 
-  matrixRows: function() {
-    var rows = [];
-    for (var pitch = SeqConfig.MAX_PITCH; pitch >= SeqConfig.MIN_PITCH; pitch--) {
-      rows.push(<li key={pitch}>{this.buildRow(pitch)}</li>);
-    }
-
-    return rows;
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return this.state.phrase.length !== nextState.phrase.length;
   },
 
   render: function() {
     return (
       <div className="piano-roll">
         <ul className="matrix" onClick={this.onClick}>
-          {this.matrixRows()}
+          {this.matrix()}
         </ul>
       </div>
     );

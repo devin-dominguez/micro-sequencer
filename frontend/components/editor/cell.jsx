@@ -1,95 +1,81 @@
 var React = require('react');
+var EditorStore = require('../../stores/editorStore');
 var EditorActions = require('../../actions/editorActions');
 
 var Cell = React.createClass({
-
-  onClick: function(e) {
-    e.preventDefault();
-    if (this.props.note === null) {
-      var newNote = {
-        pitch: this.props.pitch,
-        position: this.props.position,
-        duration: 1
-      };
-      EditorActions.insertNote(newNote);
-    }
+  getInitialState: function() {
+    return {
+      note: null
+    };
   },
 
-  onDoubleClick: function(e) {
-    e.preventDefault();
-    if (this.props.note) {
-      EditorActions.removeNote(this.props.note);
-    }
+  componentWillMount: function() {
+    this.listener = EditorStore.addListener(this.onChange);
+  },
+
+  componentWillUnmount: function() {
+    this.listener.remove();
+  },
+
+  onChange: function() {
+    this.findSelf();
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    if (this.props.note === nextProps.note) {
-      return false;
-    }
-    return true;
+    return this.state.note !== nextState.note;
   },
 
-  noteBody: function() {
-    if (this.props.note) {
-      return [
-        <div className= "note-body"
-          key="1"
-          draggable="true"
-          onDragStart={this.moveDrag}/>,
+  findSelf: function() {
+    var selfNote = null;
 
-        <div className="note-tail"
-          key="2"
-          draggable="true"
-          onDragStart={this.resizeDrag}/>
-      ];
-    }
-  },
-
-  moveDrag: function(e) {
-    var data = this.props.note;
-    data.action = "move";
-    e.dataTransfer.setData("note", JSON.stringify(data));
-  },
-
-  resizeDrag: function(e) {
-    var data = this.props.note;
-    data.action = "resize";
-    e.dataTransfer.setData("note", JSON.stringify(data));
-
-  },
-
-  moveDrop: function(e) {
-    e.preventDefault();
-    var data = e.dataTransfer.getData("note");
-    if (data) {
-      var note = JSON.parse(data);
-      var pitch = this.props.pitch;
-      var position = this.props.position;
-      if (note.action === "move") {
-        EditorActions.moveNoteTo(note, pitch, position);
-      } else if (note.action === "resize") {
-        var newDuration = position - note.position + 1;
-        EditorActions.resizeNoteTo(note, newDuration);
+    var notes = EditorStore.phrase().notes;
+    for (var i = 0, l = notes.length; i < l; i++) {
+      var note = notes[i];
+      if (note.position === this.props.position &&
+          note.pitch === this.props.pitch) {
+        selfNote = note;
       }
     }
+    this. setState({
+      note: selfNote
+    });
   },
 
-  moveDragOver: function(e) {
+  addNoteOnClick: function(e) {
     e.preventDefault();
+    var noteParams = {
+      pitch: this.props.pitch,
+      position: this.props.position,
+      duration: 1
+    };
+    EditorActions.insertNote(noteParams);
+  },
+
+  removeNoteOnDoubleClick: function(e) {
+    e.preventDefault();
+    EditorActions.removeNote(this.state.note);
+  },
+
+  noteContent: function() {
+
+    if (this.state.note !== null) {
+      var width = this.state.note.duration * 100 + "%";
+      return (
+        <div className="note"
+        style={{width: width}}
+        onDoubleClick={this.removeNoteOnDoubleClick}>
+          <div className="note-body" />
+          <div className="note-tail" />
+        </div>
+      );
+    }
+    return <div className="null-note" onClick={this.addNoteOnClick}/>;
   },
 
   render: function() {
-    var className = "matrix-cell " + this.props.type;
-    if (this.props.note && this.props.note.duration === 1) {
-      className += " note-off";
-    }
     return (
-      <li onClick={this.onClick}
-      onDoubleClick={this.onDoubleClick}
-      onDrop={this.moveDrop}
-      onDragOver={this.moveDragOver}
-      className={className}>
-        {this.noteBody()}
+      <li className="matrix-cell">
+        {this.noteContent()}
       </li>
     );
   }

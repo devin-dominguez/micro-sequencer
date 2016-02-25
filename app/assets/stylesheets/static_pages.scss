@@ -48,11 +48,11 @@ a {
   border: 1px solid $fg-color;
   border-radius: 4px;
   color: $fg-color;
-  width: 64px;
+  width: 70px;
   background: none;
   height: 32px;
-
   transition: color 250ms, background-color 250ms;
+  font-size: 14px;
 
   &:hover {
     cursor: pointer;

@@ -7,75 +7,63 @@
 }
 
 .matrix {
-  display: flex;
-  flex-direction: column;
+  margin-top: 50px;
   max-width: 800px;
   max-height: 600px;
   overflow: scroll;
 
-  li:first-child .matrix-cell {
-    border-top: thin solid $grid-color;
-  }
-
   &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     background-color: $bg-color * 0.75;
   }
   &::-webkit-scrollbar-thumb {
     background-color: $fg-color;
   }
-}
 
+  &::-webkit-scrollbar-corner {
+    background-color: $bg-color * 0.75;
+  }
+}
 
 .matrix-row {
   display: flex;
+  &:first-child .matrix-cell {
+    border-top: 1px solid $grid-color;
+  }
 }
 
 .matrix-cell {
-  border-right: thin solid $grid-color;
-  border-bottom: thin solid $grid-color;
-  width: 24px;
-  height: 12px;
+  flex: 1;
+  height: $cell-height;
+  min-width: $cell-width;
+
+  &:last-child {
+    border-right: 1px solid $grid-color;
+  }
+}
+
+.note, .null-note {
+  border-left: 1px solid $grid-color;
+  border-bottom: 1px solid $grid-color;
+  height: $cell-height - 1px;
+}
+
+.null-note {
+  width: 100%;
+
+}
+.note {
+  position: relative;
   display: flex;
-
-  &:first-child {
-    border-left: thin solid $grid-color;
-  }
-}
-
-.note-on, .note-continue, .note-off {
-  background-color: $note-color;
-}
-
-.note-on, .note-continue {
-  border-right: thin solid $note-color;
-
-}
-
-.note-continue {
-  .note-tail {
-    display: none;
-  }
 }
 
 .note-body {
+  background-color: rgba($note-color, 0.75);
   flex: 1;
-  &:hover {
-    cursor: crosshair;
-  }
 }
 
-.note-off {
-  border-right: thin solid $grid-color;
-
-  .note-tail {
-    width: 25%;
-    background-color: $note-color * 1.5;
-
-    &:hover {
-      cursor: col-resize;
-    }
-  }
+.note-tail {
+  width: 8px;
+  background-color: rgba($note-color, 0.5);
 }
-
