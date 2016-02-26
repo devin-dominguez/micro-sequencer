@@ -1,13 +1,20 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var EditorStore = require('../../stores/editorStore');
 var EditorActions = require('../../actions/editorActions');
+var EditorStore = require('../../stores/editorStore');
+
 
 var Cell = React.createClass({
   getInitialState: function() {
+    var pitch = this.props.pitch;
+    var position = this.props.position;
+    var noteData = EditorStore.getNoteCell(pitch, position) || {};
+
     return {
-      note: null,
-      dragged: false
+      note: noteData.note,
+      type: noteData.type,
+      isSelected: EditorStore.getSelectedCell(pitch, position),
+      isDestination: EditorStore.getDestinationCell(pitch, position)
     };
   },
 
@@ -20,146 +27,132 @@ var Cell = React.createClass({
   },
 
   onChange: function() {
-    this.findSelf();
+    var pitch = this.props.pitch;
+    var position = this.props.position;
+    var noteData = EditorStore.getNoteCell(pitch, position) || {};
+
+    this.setState({
+      note: noteData.note,
+      type: noteData.type,
+      isSelected: EditorStore.getSelectedCell(pitch, position),
+      isDestination: EditorStore.getDestinationCell(pitch, position)
+    });
+  },
+
+  classNames: function() {
+    var classNames = [];
+    if (!this.state.note) {
+      classNames.push("empty");
+    } else {
+      classNames.push("note");
+    }
+    return classNames.concat(this.state.type).join(" ");
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    return (this.state.note !== nextState.note) || (this.state.dragged !== nextState.dragged);
+    return (this.state.note !== nextState.note) ||
+      (this.state.isSelected !== nextState.isSelected) ||
+      (this.state.isDestination !== nextState.isDestination);
   },
 
-  findSelf: function() {
-    var selfNote = null;
-
-    var notes = EditorStore.phrase().notes;
-    for (var i = 0, l = notes.length; i < l; i++) {
-      var note = notes[i];
-      if (note.position === this.props.position &&
-          note.pitch === this.props.pitch) {
-        selfNote = note;
-      }
+  onClick: function(e) {
+    e.preventDefault();
+    if (!this.state.note) {
+      EditorActions.insertNote({
+        pitch: this.props.pitch,
+        position: this.props.position,
+        duration: 1
+      });
     }
-    this. setState({
-      note: selfNote
-    });
   },
 
-  addNoteOnClick: function(e) {
+  onDoubleClick: function(e) {
     e.preventDefault();
-    var noteParams = {
-      pitch: this.props.pitch,
-      position: this.props.position,
-      duration: 1
-    };
-    EditorActions.insertNote(noteParams);
+    if (this.state.note) {
+      EditorActions.removeNote(this.state.note);
+    }
   },
 
-  removeNoteOnDoubleClick: function(e) {
-    e.preventDefault();
-    EditorActions.removeNote(this.state.note);
+  onDragStart: function(e) {
+    var nullImg = document.createElement('img');
+    e.dataTransfer.setDragImage(nullImg, 0, 0);
+
+    if (this.state.note) {
+      var data = {
+        note: this.state.note,
+        action: "move"
+      };
+      e.dataTransfer.setData("notedata", JSON.stringify(data));
+      EditorActions.selectNoteForMove(this.state.note, this.props.position);
+    } else {
+      e.preventDefault();
+    }
   },
 
-  moveNoteOnDragStart: function(e) {
-    var node = ReactDOM.findDOMNode(this).firstChild;
-    //node.style.pointerEvents = "none";
-
-
-
-    var data = {
-      note: this.state.note,
-      action: "move"
-    };
-
-    e.dataTransfer.setData("noteData", JSON.stringify(data));
-    e.dataTransfer.dropEffect = "move";
-
-    this.setState({
-      dragged: true
-    });
-
-  },
-
-  resizeNoteOnDragStart: function(e) {
-    e.stopPropagation();
-    var data = {
-      note: this.state.note,
-      action: "resize"
-    };
-
-    e.dataTransfer.setData("noteData", JSON.stringify(data));
-  },
-
-  changeNoteOnDragOver: function(e) {
-    e.preventDefault();
-    console.log("!");
-  },
-
-  changeNoteOnDrop: function(e) {
+  onDragEnd: function(e) {
     e.preventDefault();
 
-    var data = JSON.parse(e.dataTransfer.getData("noteData"));
-    switch (data.action) {
+    EditorActions.dragCompleted();
+  },
+
+  onDragEnter: function(e) {
+    e.preventDefault();
+    if (e.dataTransfer.types.indexOf("notedata") === -1) { return; }
+    EditorActions.dragNoteOverCell(this.props.pitch, this.props.position);
+  },
+
+  onDragOver: function(e) {
+    e.preventDefault();
+  },
+
+  onDrop: function(e) {
+    try {
+      var noteData = JSON.parse(e.dataTransfer.getData("notedata"));
+    } catch (error) { return; }
+
+    switch (noteData.action) {
       case "move":
-        EditorActions.moveNoteTo(data.note, this.props.pitch, this.props.position);
+        EditorActions.moveNoteTo(noteData.note, this.props.pitch, this.props.position);
         break;
-      case "resize":
-        var newDuration = this.props.position - data.note.position + 1;
-        EditorActions.resizeNoteTo(data.note, newDuration);
     }
   },
 
-  preventDefault: function(e) {
-    e.preventDefault();
-  },
-
-  noteContent: function() {
-    if (this.state.note !== null) {
-      var width = this.state.note.duration * 100 + "%";
-
-      return (
-        <div className="note"
-        style={{width: width}}
-        onDoubleClick={this.removeNoteOnDoubleClick}
-        draggable="true"
-        onDragStart={this.moveNoteOnDragStart}
-        onDragOver={this.preventDefault}
-        onDrop={this.preventDefault}
-        >
-
-          <div className="note-body"
-          />
-
-          <div className="note-tail"
-          draggable="true"
-          onDragStart={this.resizeNoteOnDragStart}
-          onDragOver={this.preventDefault}
-          onDrop={this.preventDefault}
-          />
-
-        </div>
-      );
-    }
-
-    return (
-        <div className="null-note"
-        onClick={this.addNoteOnClick}
-        onDragOver={this.changeNoteOnDragOver}
-        onDrop={this.changeNoteOnDrop}
-        />
-      );
-  },
 
   render: function() {
-    console.log("RERENDER");
-    //if (this.state.dragged) {
-      //var style = {
-        //zIndex: "-1"
-      //};
-    //}
+    console.log("render");
+    if (this.state.type) {
+      var isEndOfNote = (this.state.type.indexOf("note-end") !== -1);
+    }
+
+    var selectedClass = this.state.isSelected ? " selected" : "";
+    var destinationClass = this.state.isDestination ? " destination" : "";
 
     return (
       <li className="matrix-cell"
+        draggable="true"
+        onClick={this.onClick}
+        onDoubleClick={this.onDoubleClick}
+        onDragStart={this.onDragStart}
+        onDragEnd={this.onDragEnd}
+        onDragEnter={this.onDragEnter}
+        onDragOver={this.onDragOver}
+        onDrop={this.onDrop}
       >
-        {this.noteContent()}
+        <div className={"cell-body " +
+          this.classNames() +
+          selectedClass +
+          destinationClass
+          }
+        />
+        {
+          isEndOfNote ?
+            <div className={"note-tail " +
+              selectedClass +
+              destinationClass
+              }
+            />
+            : null
+        }
       </li>
     );
   }

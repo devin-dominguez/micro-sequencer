@@ -37,5 +37,27 @@ module.exports = {
       noteParams: noteParams,
       duration: duration
     });
+  },
+
+  selectNoteForMove: function(noteParams, cellPosition) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.SELECT_NOTE_FOR_RESIZE,
+      noteParams: noteParams,
+      cellPosition: cellPosition
+    });
+  },
+
+  dragNoteOverCell: function(cellPitch, cellPosition) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.DRAG_NOTE_OVER_CELL,
+      cellPitch: cellPitch,
+      cellPosition: cellPosition
+    });
+  },
+
+  dragCompleted: function() {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.DRAG_COMPLETED
+    });
   }
 };

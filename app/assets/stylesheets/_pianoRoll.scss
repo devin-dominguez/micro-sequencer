@@ -12,6 +12,8 @@
   max-height: 600px;
   overflow: scroll;
 
+  cursor: pointer;
+
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -21,57 +23,61 @@
     background-color: $fg-color;
   }
 
-  &::-webkit-scrollbar-corner {
-    background-color: $bg-color * 0.75;
+  .matrix-row:first-child .matrix-cell {
+    border-top: 1px solid $grid-color;
   }
 }
 
 .matrix-row {
   display: flex;
-  &:first-child .matrix-cell {
-    border-top: 1px solid $grid-color;
-  }
 }
 
 .matrix-cell {
   flex: 1;
-  height: $cell-height;
+  min-height: $cell-height;
   min-width: $cell-width;
 
-  &:last-child {
-    border-right: 1px solid $grid-color;
+  &:first-child {
+    border-left: 1px solid $grid-color;
   }
-}
-
-.note, .null-note {
-  border-left: 1px solid $grid-color;
-  border-bottom: 1px solid $grid-color;
-  height: $cell-height - 1px;
-}
-
-.null-note {
-  width: 100%;
-
-}
-.note {
-  position: relative;
   display: flex;
-
-  &:hover {
-    cursor: pointer;
-  }
+  justify-content: space-between;
 }
 
-.note-body {
-  background-color: rgba($note-color, 0.75);
+.cell-body {
   flex: 1;
+  height: $cell-height;
+  border-bottom: 1px solid $grid-color;
+
+}
+
+.empty, .note-tail {
+  border-right: 1px solid $grid-color;
+}
+
+.note {
+  background-color: $note-color;
+  cursor: -webkit-grab;
 }
 
 .note-tail {
-  width: 8px;
-  background-color: rgba($note-color, 0.5);
+  width: 25%;
+  background-color: $note-color * 0.5;
+  border-bottom: 1px solid $grid-color;
+  cursor: col-resize;
+}
 
-  &:hover {
-    cursor: ew-resize;
+.selected {
+  background-color: rgba($note-color, 0.25);
+  &.note-tail {
+    background-color: rgba($note-color * 0.5, 0.25);
+  }
+}
+
+.destination {
+  border-right: white;
+  background-color: white;
+  &.note-tail {
+    background-color: white;
   }
 }

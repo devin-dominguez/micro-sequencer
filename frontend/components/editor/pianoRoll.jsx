@@ -6,10 +6,10 @@ var Cell = require('./cell');
 var PianoRoll = React.createClass({
   getInitialState: function() {
     return {
-      phrase: EditorStore.phrase(),
-      matrix: EditorStore.matrix()
+      length: EditorStore.phraseLength()
     };
   },
+
   componentWillMount: function() {
     this.listener = EditorStore.addListener(this.onChange);
   },
@@ -19,55 +19,33 @@ var PianoRoll = React.createClass({
   },
 
   onChange: function() {
-    this. setState({
-      phrase: EditorStore.phrase()
+    this.setState({
+      length: EditorStore.phraseLength()
     });
   },
 
   matrixCells: function() {
-    this.state.matrix.map(function(row, rowIdx) {
-      return (<ul className="matrix-row" key={rowIdx}>
-        {
-          row.map(function(cell, cellIdx) {
-            return (
-              <Cell
-              note={cell.note}
-              noteActions={cell.noteActions}
-              pitch={cell.pitch}
-              position={cell.position}
-              key={cellIdx}
-              />);
-          })
-        }
-      </ul>);
-    });
-  },
-
-  matrix: function() {
-    var rows = [];
+    var matrixRows = [];
     for (var pitch = SeqConfig.MIN_PITCH; pitch <= SeqConfig.MAX_PITCH; pitch++) {
-      rows[pitch] = [];
-      for (var tick = 0; tick < this.state.phrase.length; tick++) {
-        rows[pitch][tick] = ( <Cell key={tick} position={tick} pitch={pitch} /> );
-      }
+      matrixRows.unshift(this.matrixRow(pitch));
     }
-    return (
-      rows.reverse().map(function(row, i) {
-        return <ul key={i} className="matrix-row">{row}</ul> ;
-      })
-    );
+
+    return <div className="matrix">{matrixRows}</div>;
   },
 
-  shouldComponentUpdate: function(nextProps, nextState) {
-    return this.state.phrase.length !== nextState.phrase.length;
+  matrixRow: function(pitch) {
+    var row = [];
+    for (var position = 0; position < this.state.length; position++) {
+      row.push( <Cell pitch={pitch} position={position} key={position} />);
+    }
+
+    return <ul className="matrix-row" key={pitch}>{row}</ul>;
   },
 
   render: function() {
     return (
       <div className="piano-roll">
-        <div className="matrix" onClick={this.onClick}>
-          {this.matrix()}
-        </div>
+        {this.matrixCells()}
       </div>
     );
   }
