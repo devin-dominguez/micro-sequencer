@@ -6,7 +6,8 @@ var Cell = require('./cell');
 var PianoRoll = React.createClass({
   getInitialState: function() {
     return {
-      phrase: EditorStore.phrase()
+      phrase: EditorStore.phrase(),
+      matrix: EditorStore.matrix()
     };
   },
   componentWillMount: function() {
@@ -20,6 +21,25 @@ var PianoRoll = React.createClass({
   onChange: function() {
     this. setState({
       phrase: EditorStore.phrase()
+    });
+  },
+
+  matrixCells: function() {
+    this.state.matrix.map(function(row, rowIdx) {
+      return (<ul className="matrix-row" key={rowIdx}>
+        {
+          row.map(function(cell, cellIdx) {
+            return (
+              <Cell
+              note={cell.note}
+              noteActions={cell.noteActions}
+              pitch={cell.pitch}
+              position={cell.position}
+              key={cellIdx}
+              />);
+          })
+        }
+      </ul>);
     });
   },
 
@@ -45,9 +65,9 @@ var PianoRoll = React.createClass({
   render: function() {
     return (
       <div className="piano-roll">
-        <ul className="matrix" onClick={this.onClick}>
+        <div className="matrix" onClick={this.onClick}>
           {this.matrix()}
-        </ul>
+        </div>
       </div>
     );
   }
