@@ -68,7 +68,7 @@
 }
 
 .selected {
-  background-color: rgba($note-color, 0.25);
+  background-color: rgba($note-color, 0.5);
   &.note-tail {
     background-color: rgba($note-color * 0.5, 0.25);
   }

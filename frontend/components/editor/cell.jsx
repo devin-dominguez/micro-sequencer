@@ -19,7 +19,8 @@ var Cell = React.createClass({
   },
 
   componentWillMount: function() {
-    this.listener = EditorStore.addListener(this.onChange);
+    EditorStore.addTargetedListener(this.onChange, this.props.pitch, this.props.position);
+    //this.listener = EditorStore.addListener(this.onChange);
   },
 
   componentWillUnmount: function() {
@@ -73,7 +74,7 @@ var Cell = React.createClass({
     }
   },
 
-  onDragStart: function(e) {
+  onDragStartMove: function(e) {
     var nullImg = document.createElement('img');
     e.dataTransfer.setDragImage(nullImg, 0, 0);
 
@@ -82,11 +83,23 @@ var Cell = React.createClass({
         note: this.state.note,
         action: "move"
       };
-      e.dataTransfer.setData("notedata", JSON.stringify(data));
+      e.dataTransfer.setData("movedata", JSON.stringify(data));
       EditorActions.selectNoteForMove(this.state.note, this.props.position);
     } else {
       e.preventDefault();
     }
+  },
+
+  onDragStartResize: function(e) {
+    e.stopPropagation();
+    var nullImg = document.createElement('img');
+    e.dataTransfer.setDragImage(nullImg, 0, 0);
+    var data = {
+      note: this.state.note,
+      action: "resize"
+    };
+    e.dataTransfer.setData("resizedata", JSON.stringify(data));
+    //EditorActions.selectNoteForMove(this.state.note, this.props.position);
   },
 
   onDragEnd: function(e) {
@@ -97,7 +110,7 @@ var Cell = React.createClass({
 
   onDragEnter: function(e) {
     e.preventDefault();
-    if (e.dataTransfer.types.indexOf("notedata") === -1) { return; }
+    if (e.dataTransfer.types.indexOf("movedata") === -1) { return; }
     EditorActions.dragNoteOverCell(this.props.pitch, this.props.position);
   },
 
@@ -106,20 +119,20 @@ var Cell = React.createClass({
   },
 
   onDrop: function(e) {
-    try {
-      var noteData = JSON.parse(e.dataTransfer.getData("notedata"));
-    } catch (error) { return; }
-
-    switch (noteData.action) {
-      case "move":
-        EditorActions.moveNoteTo(noteData.note, this.props.pitch, this.props.position);
-        break;
+    if (e.dataTransfer.types.indexOf("movedata") !== -1) {
+        var moveData = JSON.parse(e.dataTransfer.getData("movedata"));
+        EditorActions.moveNoteTo(moveData.note,
+            this.props.pitch,
+            this.props.position);
+    }
+     else if (e.dataTransfer.types.indexOf("resizedata") !== -1) {
+        var resizeData = JSON.parse(e.dataTransfer.getData("resizedata"));
+        console.log(resizeData);
     }
   },
 
 
   render: function() {
-    console.log("render");
     if (this.state.type) {
       var isEndOfNote = (this.state.type.indexOf("note-end") !== -1);
     }
@@ -132,7 +145,7 @@ var Cell = React.createClass({
         draggable="true"
         onClick={this.onClick}
         onDoubleClick={this.onDoubleClick}
-        onDragStart={this.onDragStart}
+        onDragStart={this.onDragStartMove}
         onDragEnd={this.onDragEnd}
         onDragEnter={this.onDragEnter}
         onDragOver={this.onDragOver}
@@ -150,6 +163,8 @@ var Cell = React.createClass({
               selectedClass +
               destinationClass
               }
+              draggable="true"
+              onDragStart={this.onDragStartResize}
             />
             : null
         }

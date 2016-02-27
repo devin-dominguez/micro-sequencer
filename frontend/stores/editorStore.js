@@ -6,9 +6,14 @@ var SeqConfig = require('../seqApi/config');
 
 var _currentPhrase = new Phrase({length: 64});
 
+
 var _noteCells = {};
 var _selectedCells = {};
 var _destinationCells = {};
+
+var _lastNoteCells = {};
+var _lastSelectedCells = {};
+var _lastDestinationCells = {};
 
 var _selectedNote = null;
 var _offset = 0;
@@ -18,7 +23,11 @@ function _cellKey(pitch, position) {
 }
 
 function _resetCells() {
-  _noteCells = {};
+  //_lastNoteCells = JSON.parse(JSON.stringify(_noteCells));
+  _lastSelectedCells = JSON.parse(JSON.stringify(_selectedCells));
+  _lastDestinationCells = JSON.parse(JSON.stringify(_destinationCells));
+
+  //_noteCells = {};
   _selectedCells = {};
   _destinationCells = {};
 
@@ -27,6 +36,7 @@ function _resetCells() {
 }
 
 function _populateNoteCells() {
+  _lastNoteCells = JSON.parse(JSON.stringify(_noteCells));
   _noteCells = {};
 
   _currentPhrase.notes.forEach(function(note) {
@@ -53,6 +63,7 @@ function _setSelectedNote(note, position) {
 }
 
 function _populateSelectedCells() {
+  _lastSelectedCells = JSON.parse(JSON.stringify(_selectedCells));
   var note = _selectedNote;
   _selectedCells = {};
   for (var tick = 0; tick < note.duration; tick++) {
@@ -62,6 +73,7 @@ function _populateSelectedCells() {
 }
 
 function _populateDestinationCells(pitch, position) {
+  _lastDestinationCells = JSON.parse(JSON.stringify(_destinationCells));
   _destinationCells = {};
   for (var tick = 0; tick < _selectedNote.duration; tick++) {
     var rowPos = position + tick - _offset;
@@ -71,6 +83,7 @@ function _populateDestinationCells(pitch, position) {
     }
   }
 }
+
 
 var EditorStore = new Store(Dispatcher);
 
@@ -139,5 +152,39 @@ EditorStore.getSelectedCell = function(pitch, position) {
 EditorStore.getDestinationCell = function(pitch, position) {
   return _destinationCells[_cellKey(pitch, position)];
 };
+
+var _targetedCallbacks = {};
+
+EditorStore.addTargetedListener = function(callback, pitch, position) {
+  _targetedCallbacks[_cellKey(pitch, position)] = callback;
+};
+
+function _emitTargetedCallbacks() {
+  var noteTargets = Object.keys(_noteCells);
+  var selectedTargets = Object.keys(_selectedCells);
+  var destinationTargets = Object.keys(_destinationCells);
+
+  var lastNoteTargets = Object.keys(_lastNoteCells);
+  var lastSelectedTargets = Object.keys(_lastSelectedCells);
+  var lastDestinationTargets = Object.keys(_lastDestinationCells);
+
+  var targets = noteTargets.
+    concat(selectedTargets).
+    concat(destinationTargets).
+    concat(lastNoteTargets).
+    concat(lastSelectedTargets).
+    concat(lastDestinationTargets);
+
+  // TODO uniqify
+  var numCallbacks = 0;
+  targets.forEach(function(targetIdx) {
+    _targetedCallbacks[targetIdx]();
+    numCallbacks++;
+  });
+  console.log(numCallbacks);
+}
+
+EditorStore.addListener(_emitTargetedCallbacks);
+
 
 module.exports = EditorStore;
