@@ -133,6 +133,7 @@ var Cell = React.createClass({
 
 
   render: function() {
+    var hasNote = Boolean(this.state.note);
     if (this.state.type) {
       var isEndOfNote = (this.state.type.indexOf("note-end") !== -1);
     }
@@ -144,9 +145,9 @@ var Cell = React.createClass({
       <li className="matrix-cell"
         draggable="true"
         onClick={this.onClick}
-        onDoubleClick={this.onDoubleClick}
-        onDragStart={this.onDragStartMove}
-        onDragEnd={this.onDragEnd}
+        onDoubleClick={hasNote ? this.onDoubleClick : undefined}
+        onDragStart={hasNote ? this.onDragStartMove : undefined}
+        onDragEnd={hasNote ? this.onDragEnd : undefined}
         onDragEnter={this.onDragEnter}
         onDragOver={this.onDragOver}
         onDrop={this.onDrop}
