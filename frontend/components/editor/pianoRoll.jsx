@@ -3,6 +3,7 @@ var EditorStore = require('../../stores/editorStore');
 var EditorActions = require('../../actions/editorActions');
 var SeqConfig = require('../../seqApi/config');
 var Cell = require('./cell');
+var DestinationCell = require('./destinationCell');
 
 var config = require('../../constants/editorConstants');
 
@@ -26,6 +27,7 @@ var PianoRoll = React.createClass({
     this.ctx = this.canvas.getContext("2d");
     this.ctx.translate(0.5, 0.5);
     window.requestAnimationFrame(this.draw);
+    var matrix = document.querySelector(".matrix");
   },
 
   componentWillUnmount: function() {
@@ -48,17 +50,43 @@ var PianoRoll = React.createClass({
     this.createCells();
     this.drawCells();
 
-    this.updateCellInfo();
+    this.updateCurrentCellInfo();
   },
 
   drawGrid: function() {
     var ctx = this.ctx;
     var width = this.canvas.width;
     var height = this.canvas.height;
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(-1, -1, width + 1, height + 1);
     ctx.globalAlpha = 1;
     ctx.strokeStyle = config.GRID_COLOR;
+
+    var notePattern = [
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true
+    ];
+
+    for (var p = SeqConfig.MAX_PITCH; p >= SeqConfig.MIN_PITCH; p--) {
+      var y = SeqConfig.MAX_PITCH - p;
+      ctx.globalAlpha = 0.0625;
+      ctx.fillStyle = notePattern[p % 12] ? "black" : "white";
+      ctx.fillRect(0, y * config.CELL_HEIGHT, width, config.CELL_HEIGHT);
+      ctx.globalAlpha = 0.125;
+      ctx.strokeRect(0, y * config.CELL_HEIGHT, width, config.CELL_HEIGHT);
+    }
+
     for (var x = 0; x < this.state.length + 1; x++) {
+      ctx.globalAlpha = x % 4  === 0 ? 1 : 0.25;
+      ctx.strokeStyle = x % 16 === 0 ? config.GRID_BAR_COLOR : config.GRID_COLOR;
       ctx.beginPath();
       ctx.moveTo(x * config.CELL_WIDTH, 0);
       ctx.lineTo(x * config.CELL_WIDTH, height);
@@ -66,25 +94,30 @@ var PianoRoll = React.createClass({
       ctx.closePath();
     }
 
-    for (var y = 0; y < this.numPitches + 1; y++) {
-      ctx.beginPath();
-      ctx.moveTo(0, y * config.CELL_HEIGHT);
-      ctx.lineTo(width , y * config.CELL_HEIGHT);
-      ctx.stroke();
-      ctx.closePath();
-    }
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = config.GRID_BAR_COLOR;
+    ctx.strokeRect(0, 0, width, height - 1);
+
   },
 
   createCells: function() {
     this.cellMap = {};
-    this.cells = EditorStore.cells().map(function(cell) {
+    this.noteCells = EditorStore.noteCells().map(function(cell) {
       this.cellMap[cell.key] = cell;
       return new Cell(cell);
     }, this);
+
+    this.destinationCells = EditorStore.destinationCells().map(function(cell) {
+      return new DestinationCell(cell);
+    },this);
   },
 
   drawCells: function() {
-    this.cells.forEach(function(cell) {
+    this.noteCells.forEach(function(cell) {
+      cell.draw(this.ctx);
+    }, this);
+
+    this.destinationCells.forEach(function(cell) {
       cell.draw(this.ctx);
     }, this);
   },
@@ -108,11 +141,13 @@ var PianoRoll = React.createClass({
       } else {
         this.onTail = false;
       }
+
       this.updateCursor();
-      this.updateCellInfo();
+      this.updateCurrentCellInfo();
 
 
-    if (this.currentPitch !== newPitch || this.currentPosition !== newPosition) {
+    if (this.currentPitch !== newPitch ||
+        this.currentPosition !== newPosition) {
       this.currentPitch = Math.min(SeqConfig.MAX_PITCH,
           Math.max(SeqConfig.MIN_PITCH, newPitch));
       this.currentPosition = Math.min(this.state.length,
@@ -131,7 +166,7 @@ var PianoRoll = React.createClass({
     }
   },
 
-  updateCellInfo: function() {
+  updateCurrentCellInfo: function() {
     var key = this.currentPitch * this.state.length + this.currentPosition;
     this.currentCell = this.cellMap[key] || {};
   },
@@ -166,13 +201,12 @@ var PianoRoll = React.createClass({
       this.resizeDrag = true;
       EditorActions.dragNoteOverCellForResize(this.currentPosition);
     }
-
-    EditorActions.selectNote(this.currentCell.note, this.currentPosition);
   },
 
   onMouseUp: function(e) {
     if (this.moveDrag) {
-      EditorActions.moveSelectedNoteTo(this.currentPitch, this.currentPosition);
+      EditorActions.moveSelectedNoteTo(this.currentPitch,
+          this.currentPosition);
     }
     if (this.resizeDrag) {
       EditorActions.resizeNoteTo(this.currentPosition);
@@ -217,7 +251,6 @@ var PianoRoll = React.createClass({
       </div>
     );
   }
-
 });
 
 module.exports = PianoRoll;

@@ -15,7 +15,7 @@ function Cell(params) {
 }
 
 Cell.prototype.draw = function(ctx) {
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.75;
   if (this.note) {
     if (this.selected) {
       ctx.globalAlpha = 0.25;
@@ -25,10 +25,6 @@ Cell.prototype.draw = function(ctx) {
     this.drawNoteTail(ctx);
   }
 
-  if (this.destination) {
-    ctx.globalAlpha = 1;
-    this.drawDestination(ctx);
-  }
 };
 
 Cell.prototype.drawSelected = function(ctx) {
@@ -42,12 +38,9 @@ Cell.prototype.drawNoteBody = function(ctx) {
 
   if (this.note.position === this.position) {
     ctx.fillStyle = config.NOTE_COLOR;
-    ctx.strokeStyle = config.GRID_COLOR;
 
-    ctx.fillRect(this.x, this.y,
-        config.CELL_WIDTH * this.note.duration, config.CELL_HEIGHT);
-    ctx.strokeRect(this.x, this.y,
-        config.CELL_WIDTH * this.note.duration, config.CELL_HEIGHT);
+    ctx.fillRect(this.x + 1, this.y + 1,
+        config.CELL_WIDTH * this.note.duration - 2, config.CELL_HEIGHT - 2);
   }
 };
 
@@ -63,13 +56,4 @@ Cell.prototype.drawNoteTail = function(ctx) {
   }
 };
 
-Cell.prototype.drawDestination = function(ctx) {
-
-  if (this.destination.position === this.position) {
-    ctx.strokeStyle = "white";
-
-    ctx.strokeRect(this.x, this.y,
-        config.CELL_WIDTH * this.destination.duration, config.CELL_HEIGHT);
-  }
-};
 module.exports = Cell;

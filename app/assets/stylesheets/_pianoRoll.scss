@@ -8,13 +8,21 @@
 
 .matrix {
   margin-top: 50px;
-  max-width: 800px;
-  max-height: 600px;
-  overflow: scroll;
+  width: 320px;
+  height: 240px;
+  max-width: 90vw;
+  max-height: 75vh;
+  resize: both;
+  border-top: 1px dashed $grid-color;
+  border-left: 1px dashed $grid-color;
+  overflow: auto;
+  padding: 5px;
 
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    margin: 0;
+    padding: 0;
+    width: 8px;
+    height: 8px;
     background-color: $bg-color * 0.75;
   }
   &::-webkit-scrollbar-thumb {
