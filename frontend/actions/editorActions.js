@@ -47,14 +47,6 @@ module.exports = {
     });
   },
 
-  selectNoteForMove: function(noteParams, cellPosition) {
-    Dispatcher.dispatch({
-      actionType: EditorConstants.SELECT_NOTE_FOR_MOVE,
-      noteParams: noteParams,
-      cellPosition: cellPosition
-    });
-  },
-
   selectNote: function(noteParams, cellPosition) {
     Dispatcher.dispatch({
       actionType: EditorConstants.SELECT_NOTE,
@@ -82,5 +74,13 @@ module.exports = {
     Dispatcher.dispatch({
       actionType: EditorConstants.DRAG_COMPLETED
     });
-  }
+  },
+
+  selectKey: function(keyPitch) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.SELECT_KEY,
+      keyPitch: keyPitch
+    });
+  },
+
 };

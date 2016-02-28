@@ -59,15 +59,14 @@ var PianoRoll = React.createClass({
     var width = this.canvas.width;
     var height = this.canvas.height;
     ctx.clearRect(-1, -1, width + 1, height + 1);
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = config.GRID_COLOR;
 
+    ctx.strokeStyle = config.GRID_COLOR;
     for (var p = SeqConfig.MAX_PITCH; p >= SeqConfig.MIN_PITCH; p--) {
       var y = SeqConfig.MAX_PITCH - p;
       ctx.globalAlpha = 0.0625;
       ctx.fillStyle = config.KEY_PATTERN[p % 12] ? "black" : "white";
       ctx.fillRect(0, y * config.CELL_HEIGHT, width, config.CELL_HEIGHT);
-      ctx.globalAlpha = 0.125;
+      ctx.globalAlpha = (EditorStore.selectedKey() === p) ? 1 : 0.125;
       ctx.strokeRect(0, y * config.CELL_HEIGHT, width, config.CELL_HEIGHT);
     }
 

@@ -14,6 +14,8 @@ var _destinationCells = {};
 var _selectedNote = null;
 var _offset = 0;
 
+var _selectedKey = null;
+
 function _cellKey(pitch, position) {
   return pitch * _currentPhrase.length + position;
 }
@@ -143,21 +145,23 @@ EditorStore.__onDispatch = function(payload) {
       break;
 
     case EditorConstants.SELECT_NOTE:
-      _error = "";
       _setSelectedNote(payload.noteParams, payload.cellPosition);
       _populateSelectedCells();
       this.__emitChange();
       break;
 
     case EditorConstants.DRAG_NOTE_OVER_CELL:
-      _error = "";
       _populateDestinationCells(payload.cellPitch, payload.cellPosition);
       this.__emitChange();
       break;
 
     case EditorConstants.DRAG_NOTE_OVER_CELL_FOR_RESIZE:
-      _error = "";
       _populateDestinationCellsForResize(payload.cellPosition);
+      this.__emitChange();
+      break;
+
+    case EditorConstants.SELECT_KEY:
+      _selectedKey = payload.keyPitch;
       this.__emitChange();
       break;
   }
@@ -183,6 +187,10 @@ EditorStore.destinationCells = function() {
   return Object.keys(_destinationCells).map(function(key) {
     return _destinationCells[key];
   });
+};
+
+EditorStore.selectedKey = function() {
+  return _selectedKey;
 };
 
 EditorStore.error = function() {
