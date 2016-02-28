@@ -63,7 +63,6 @@ Note.prototype._checkPitch = function(pitch) {
 function DurationException(duration) {
   this.name = "DurationException";
   this.duration = duration;
-  this.message = "Duration must be >= 1";
 }
 
 function PitchOutOfRangeException(pitch) {

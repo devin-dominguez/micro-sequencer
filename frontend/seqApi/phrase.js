@@ -191,12 +191,14 @@ function NoteOverlapException(attemptedNote, overlappingNote) {
   this.name = "NoteOverlapException";
   this.attemptedNote = attemptedNote;
   this.overlappingNote = overlappingNote;
+  this.message = "Notes can't overlap";
 }
 
 function NoteOutOfBoundsException(attemptedNote, length) {
   this.name = "NoteOutOfBoundsException";
   this.attemptedNote = attemptedNote;
   this.length = length;
+  this.message = "Note would fall out of bounds";
 }
 
 function NoteNotFoundException(targetNote) {

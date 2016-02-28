@@ -12,8 +12,6 @@
   max-height: 600px;
   overflow: scroll;
 
-  cursor: pointer;
-
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -22,62 +20,10 @@
   &::-webkit-scrollbar-thumb {
     background-color: $fg-color;
   }
-
-  .matrix-row:first-child .matrix-cell {
-    border-top: 1px solid $grid-color;
-  }
 }
 
-.matrix-row {
-  display: flex;
+#matrix-canvas {
+  padding: 0;
+  margin: 0;
 }
 
-.matrix-cell {
-  flex: 1;
-  min-height: $cell-height;
-  min-width: $cell-width;
-
-  &:first-child {
-    border-left: 1px solid $grid-color;
-  }
-  display: flex;
-  justify-content: space-between;
-}
-
-.cell-body {
-  flex: 1;
-  height: $cell-height;
-  border-bottom: 1px solid $grid-color;
-
-}
-
-.empty, .note-tail {
-  border-right: 1px solid $grid-color;
-}
-
-.note {
-  background-color: $note-color;
-  cursor: -webkit-grab;
-}
-
-.note-tail {
-  width: 25%;
-  background-color: $note-color * 0.5;
-  border-bottom: 1px solid $grid-color;
-  cursor: col-resize;
-}
-
-.selected {
-  background-color: rgba($note-color, 0.5);
-  &.note-tail {
-    background-color: rgba($note-color * 0.5, 0.25);
-  }
-}
-
-.destination {
-  border-right: white;
-  background-color: white;
-  &.note-tail {
-    background-color: white;
-  }
-}

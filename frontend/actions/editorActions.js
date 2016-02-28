@@ -2,9 +2,10 @@ var Dispatcher = require('../dispatcher/dispatcher');
 var EditorConstants = require('../constants/editorConstants');
 
 module.exports = {
-  randomize: function() {
+  loadPhrase: function(phrase) {
     Dispatcher.dispatch({
-    actionType: "RANDOMIZE"
+      actionType: EditorConstants.LOAD_PHRASE,
+      phrase: phrase
     });
   },
 
@@ -31,6 +32,14 @@ module.exports = {
     });
   },
 
+  moveSelectedNoteTo: function(pitch, position) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.MOVE_NOTE_TO,
+      pitch: pitch,
+      position: position
+    });
+  },
+
   resizeNoteTo: function(noteParams, duration) {
     Dispatcher.dispatch({
       actionType: EditorConstants.REISZE_NOTE_TO,
@@ -41,7 +50,7 @@ module.exports = {
 
   selectNoteForMove: function(noteParams, cellPosition) {
     Dispatcher.dispatch({
-      actionType: EditorConstants.SELECT_NOTE_FOR_RESIZE,
+      actionType: EditorConstants.SELECT_NOTE_FOR_MOVE,
       noteParams: noteParams,
       cellPosition: cellPosition
     });

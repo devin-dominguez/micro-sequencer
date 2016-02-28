@@ -8,6 +8,7 @@ var App = require('./components/app');
 var SessionModal = require('./components/session/sessionModal');
 
 var SessionActions = require('./actions/sessionActions');
+var EditorActions = require('./actions/editorActions');
 
 var routes = (
   <Route component={App} path="/">
@@ -22,5 +23,6 @@ $(function() {
   ReactDOM.render(<Router history={History}>{routes}</Router>, contentElement);
 });
 
+
 window.EditorStore = require('./stores/editorStore');
-window.EditorActions = require('./actions/editorActions');
+window.EditorActions = EditorActions;
