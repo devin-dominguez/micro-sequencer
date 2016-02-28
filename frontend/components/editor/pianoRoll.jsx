@@ -56,7 +56,7 @@ var PianoRoll = React.createClass({
     var width = this.canvas.width;
     var height = this.canvas.height;
     ctx.clearRect(0, 0, width, height);
-    ctx.globalAlpha = 0.5;
+    ctx.globalAlpha = 1;
     ctx.strokeStyle = config.GRID_COLOR;
     for (var x = 0; x < this.state.length + 1; x++) {
       ctx.beginPath();
@@ -99,29 +99,41 @@ var PianoRoll = React.createClass({
       this.numPitches *
       (e.nativeEvent.offsetY / this.canvas.height) + 1;
 
+      if (this.currentCell.note) {
+        var note = this.currentCell.note;
+        var noteEnd = (note.position + note.duration) * config.CELL_WIDTH;
+        var offset = e.nativeEvent.offsetX;
+        var subPosition = noteEnd - offset;
+        this.onTail = subPosition < config.NOTE_TAIL_WIDTH;
+      } else {
+        this.onTail = false;
+      }
+      this.updateCursor();
+      this.updateCellInfo();
+
+
     if (this.currentPitch !== newPitch || this.currentPosition !== newPosition) {
       this.currentPitch = Math.min(SeqConfig.MAX_PITCH,
           Math.max(SeqConfig.MIN_PITCH, newPitch));
       this.currentPosition = Math.min(this.state.length,
           Math.max(0, newPosition));
 
-      this.updateCellInfo();
       this.onEnterNewCell();
+    }
+  },
+
+  updateCursor: function() {
+    if (!this.moveDrag && !this.copyDrag && !this.resizeDrag) {
+      this.canvas.style.cursor = this.currentCell.note ? "pointer" : "crosshair";
+    }
+    if (this.onTail) {
+      this.canvas.style.cursor = "col-resize";
     }
   },
 
   updateCellInfo: function() {
     var key = this.currentPitch * this.state.length + this.currentPosition;
     this.currentCell = this.cellMap[key] || {};
-    if (!this.moveDrag && !this.copyDrag && !this.resizeDrag) {
-      this.canvas.style.cursor = this.currentCell.note ? "pointer" : "crosshair";
-    }
-  },
-
-  onEnterNewCell: function() {
-    if (this.moveDrag) {
-      EditorActions.dragNoteOverCell(this.currentPitch, this.currentPosition);
-    }
   },
 
   onDoubleClick: function(e) {
@@ -142,19 +154,42 @@ var PianoRoll = React.createClass({
     if (!this.currentCell.note) {
       return false;
     }
-    this.moveDrag = true;
-    EditorActions.selectNoteForMove(this.currentCell.note, this.currentPosition);
-    this.canvas.style.cursor = "move";
+
+    EditorActions.selectNote(this.currentCell.note, this.currentPosition);
+
+    if (!this.onTail) {
+      this.moveDrag = true;
+      this.canvas.style.cursor = "move";
+      EditorActions.dragNoteOverCell(this.currentPitch, this.currentPosition);
+    }
+    if (this.onTail) {
+      this.resizeDrag = true;
+      EditorActions.dragNoteOverCellForResize(this.currentPosition);
+    }
+
+    EditorActions.selectNote(this.currentCell.note, this.currentPosition);
   },
 
   onMouseUp: function(e) {
     if (this.moveDrag) {
       EditorActions.moveSelectedNoteTo(this.currentPitch, this.currentPosition);
     }
+    if (this.resizeDrag) {
+      EditorActions.resizeNoteTo(this.currentPosition);
+    }
     this.moveDrag = false;
-    this.resizeDrage = false;
+    this.resizeDrag = false;
     this.copyDrag = false;
     this.canvas.style.cursor = "crosshair";
+  },
+
+  onEnterNewCell: function() {
+    if (this.moveDrag) {
+      EditorActions.dragNoteOverCell(this.currentPitch, this.currentPosition);
+    }
+    if (this.resizeDrag) {
+      EditorActions.dragNoteOverCellForResize(this.currentPosition);
+    }
   },
 
   preventDefault: function(e) {

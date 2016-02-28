@@ -32,7 +32,6 @@ Cell.prototype.draw = function(ctx) {
 };
 
 Cell.prototype.drawSelected = function(ctx) {
-    ctx.fillStyle = "green";
     ctx.strokeStyle = config.GRID_COLOR;
 
     ctx.fillRect(this.x, this.y, config.CELL_WIDTH, config.CELL_HEIGHT);

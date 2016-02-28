@@ -35,6 +35,7 @@ function _populateNoteCells() {
 }
 
 function _setSelectedNote(note, position) {
+  console.log("settingNote");
   _selectedNote = note;
   _offset = position - note.position;
 }
@@ -60,6 +61,16 @@ function _populateDestinationCells(pitch, position) {
       };
     }
   }
+}
+
+function _populateDestinationCellsForResize(endPosition) {
+  _destinationCells = {};
+  var newDuration = endPosition - _selectedNote.position + 1;
+  var key = _cellKey(_selectedNote.pitch, _selectedNote.position);
+  _destinationCells[key] = {
+    position: _selectedNote.position,
+    duration: Math.max(1, newDuration)
+  };
 }
 
 function _populateCells() {
@@ -145,7 +156,8 @@ EditorStore.__onDispatch = function(payload) {
     case EditorConstants.REISZE_NOTE_TO:
       _error = "";
       try {
-        _currentPhrase.resizeNoteTo(payload.noteParams, payload.duration);
+        _currentPhrase.resizeNoteTo(_selectedNote,
+            Math.max(1, payload.endPosition - _selectedNote.position + 1));
       } catch (error) {
         _error = error.message;
       }
@@ -155,7 +167,7 @@ EditorStore.__onDispatch = function(payload) {
       this.__emitChange();
       break;
 
-    case EditorConstants.SELECT_NOTE_FOR_MOVE:
+    case EditorConstants.SELECT_NOTE:
       _error = "";
       _setSelectedNote(payload.noteParams, payload.cellPosition);
       _populateSelectedCells();
@@ -170,10 +182,9 @@ EditorStore.__onDispatch = function(payload) {
       this.__emitChange();
       break;
 
-    case EditorConstants.DRAG_COMPLETED:
+    case EditorConstants.DRAG_NOTE_OVER_CELL_FOR_RESIZE:
       _error = "";
-      _resetCells();
-      _populateNoteCells();
+      _populateDestinationCellsForResize(payload.cellPosition);
       _populateCells();
       this.__emitChange();
       break;

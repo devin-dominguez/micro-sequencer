@@ -40,11 +40,10 @@ module.exports = {
     });
   },
 
-  resizeNoteTo: function(noteParams, duration) {
+  resizeNoteTo: function(endPosition) {
     Dispatcher.dispatch({
       actionType: EditorConstants.REISZE_NOTE_TO,
-      noteParams: noteParams,
-      duration: duration
+      endPosition: endPosition
     });
   },
 
@@ -56,10 +55,25 @@ module.exports = {
     });
   },
 
+  selectNote: function(noteParams, cellPosition) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.SELECT_NOTE,
+      noteParams: noteParams,
+      cellPosition: cellPosition
+    });
+  },
+
   dragNoteOverCell: function(cellPitch, cellPosition) {
     Dispatcher.dispatch({
       actionType: EditorConstants.DRAG_NOTE_OVER_CELL,
       cellPitch: cellPitch,
+      cellPosition: cellPosition
+    });
+  },
+
+  dragNoteOverCellForResize: function(cellPosition) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.DRAG_NOTE_OVER_CELL_FOR_RESIZE,
       cellPosition: cellPosition
     });
   },
