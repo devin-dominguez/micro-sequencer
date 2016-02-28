@@ -6,6 +6,7 @@ module.exports = {
   GRID_BAR_COLOR: "#aaa",
   NOTE_COLOR: "#a11",
   NOTE_TAIL_COLOR: "#411",
+  KEY_PATTERN: [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1],
 
   LOAD_PHRASE: "LOAD_PHRASE",
 

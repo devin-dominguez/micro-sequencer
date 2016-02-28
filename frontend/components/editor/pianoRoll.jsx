@@ -2,10 +2,10 @@ var React = require('react');
 var EditorStore = require('../../stores/editorStore');
 var EditorActions = require('../../actions/editorActions');
 var SeqConfig = require('../../seqApi/config');
+var config = require('../../constants/editorConstants');
 var Cell = require('./cell');
 var DestinationCell = require('./destinationCell');
-
-var config = require('../../constants/editorConstants');
+var Keyboard = require('./keyboard');
 
 var PianoRoll = React.createClass({
   getInitialState: function() {
@@ -27,7 +27,8 @@ var PianoRoll = React.createClass({
     this.ctx = this.canvas.getContext("2d");
     this.ctx.translate(0.5, 0.5);
     window.requestAnimationFrame(this.draw);
-    var matrix = document.querySelector(".matrix");
+    this.matrix = document.querySelector(".matrix");
+    this.keyboard = document.querySelector(".keyboard");
   },
 
   componentWillUnmount: function() {
@@ -61,24 +62,10 @@ var PianoRoll = React.createClass({
     ctx.globalAlpha = 1;
     ctx.strokeStyle = config.GRID_COLOR;
 
-    var notePattern = [
-      false,
-      true,
-      false,
-      true,
-      false,
-      false,
-      true,
-      false,
-      true,
-      false,
-      true
-    ];
-
     for (var p = SeqConfig.MAX_PITCH; p >= SeqConfig.MIN_PITCH; p--) {
       var y = SeqConfig.MAX_PITCH - p;
       ctx.globalAlpha = 0.0625;
-      ctx.fillStyle = notePattern[p % 12] ? "black" : "white";
+      ctx.fillStyle = config.KEY_PATTERN[p % 12] ? "black" : "white";
       ctx.fillRect(0, y * config.CELL_HEIGHT, width, config.CELL_HEIGHT);
       ctx.globalAlpha = 0.125;
       ctx.strokeRect(0, y * config.CELL_HEIGHT, width, config.CELL_HEIGHT);
@@ -226,9 +213,8 @@ var PianoRoll = React.createClass({
     }
   },
 
-  preventDefault: function(e) {
-    e.preventDefault();
-    return false;
+  onScroll:function(e) {
+    this.keyboard.scrollTop = this.matrix.scrollTop;
   },
 
   render: function() {
@@ -237,7 +223,13 @@ var PianoRoll = React.createClass({
 
     return (
       <div className="piano-roll">
-        <div className="matrix">
+        <Keyboard
+          numPitches={this.numPitches}
+          height={cHeight}
+        />
+        <div className="matrix"
+          onScroll={this.onScroll}
+        >
           <canvas id="matrix-canvas"
             width={cWidth + 1}
             height={cHeight + 1}

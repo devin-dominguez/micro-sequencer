@@ -1,26 +1,21 @@
 @import 'variables';
 
 .piano-roll {
+  margin-top: 50px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .matrix {
-  margin-top: 50px;
-  width: 320px;
-  height: 240px;
-  max-width: 90vw;
-  max-height: 75vh;
-  resize: both;
+  height: $piano-roll-height;
+  width: 80vw;
   border-top: 1px dashed $grid-color;
   border-left: 1px dashed $grid-color;
-  overflow: auto;
+  overflow: scroll;
   padding: 5px;
 
   &::-webkit-scrollbar {
-    margin: 0;
-    padding: 0;
     width: 8px;
     height: 8px;
     background-color: $bg-color * 0.75;
@@ -30,8 +25,14 @@
   }
 }
 
-#matrix-canvas {
-  padding: 0;
-  margin: 0;
+.keyboard {
+  border: 1px dashed $grid-color;
+  margin-right: 4px;
+  overflow: hidden;
+  height: $piano-roll-height;
+}
+
+#keyboard-canvas {
+  padding: 5px;
 }
 
