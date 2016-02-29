@@ -22,15 +22,18 @@ function SynthRunner(synth, track, audio) {
 ///////////////
 
 SynthRunner.prototype.noteOn = function(pitch, time) {
-  var freq = mtof[pitch];
+  time = time || this.audio.currentTime;
 
+  var freq = mtof[pitch];
   var voice = new Voice(this.track, this.audio);
+
   voice._noteOn(this.synth, freq, time);
 
   return voice;
 };
 
 SynthRunner.prototype.noteOff = function(voice, time) {
+  time = time || this.audio.currentTime;
   voice._noteOff(this.synth, time);
 };
 

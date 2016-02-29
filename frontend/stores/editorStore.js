@@ -3,7 +3,7 @@ var Store = require('flux/utils').Store;
 var Phrase = require('../seqApi/phrase');
 var EditorConstants = require('../constants/editorConstants');
 
-var _currentPhrase = new Phrase({length: 64});
+var _currentPhrase = new Phrase({length: 128});
 
 var _error = "";
 

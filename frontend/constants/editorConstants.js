@@ -1,6 +1,6 @@
 module.exports = {
   CELL_WIDTH: 18,
-  CELL_HEIGHT: 10,
+  CELL_HEIGHT: 12,
   NOTE_TAIL_WIDTH: 6,
   GRID_COLOR: "#666",
   GRID_BAR_COLOR: "#aaa",

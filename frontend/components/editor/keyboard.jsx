@@ -3,6 +3,7 @@ var config = require('../../constants/editorConstants');
 var SeqConfig = require('../../seqApi/config');
 var EditorActions = require('../../actions/editorActions');
 var EditorStore = require('../../stores/editorStore');
+var PlaybackActions = require('../../actions/playbackActions');
 
 var Keyboard = React.createClass({
   componentWillMount: function() {
@@ -47,6 +48,7 @@ var Keyboard = React.createClass({
       ctx.strokeRect(0, y * config.CELL_HEIGHT, width - 1, config.CELL_HEIGHT);
     }
   },
+
   onMouseMove: function(e) {
     var newPitch = 0 |
       SeqConfig.MAX_PITCH -
@@ -61,8 +63,19 @@ var Keyboard = React.createClass({
   },
 
   onMouseLeave: function(e) {
-      this.currentPitch = null;
-      EditorActions.selectKey(null);
+    this.currentPitch = null;
+    EditorActions.selectKey(null);
+    PlaybackActions.demoNoteOff();
+  },
+
+  onMouseDown: function(e) {
+    e.preventDefault();
+    PlaybackActions.demoNoteOn(this.currentPitch);
+  },
+
+  onMouseUp: function(e) {
+    e.preventDefault();
+    PlaybackActions.demoNoteOff();
   },
 
 
@@ -74,6 +87,8 @@ var Keyboard = React.createClass({
           height={this.props.height}
           onMouseMove={this.onMouseMove}
           onMouseLeave={this.onMouseLeave}
+          onMouseDown={this.onMouseDown}
+          onMouseUp={this.onMouseUp}
 
         />
 

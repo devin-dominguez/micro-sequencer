@@ -14,6 +14,7 @@
   border-left: 1px dashed $grid-color;
   overflow: scroll;
   padding: 5px;
+  transition: height 100ms, width 100ms;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -30,6 +31,7 @@
   margin-right: 4px;
   overflow: hidden;
   height: $piano-roll-height;
+  transition: height 100ms;
 }
 
 #keyboard-canvas {
