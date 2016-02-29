@@ -26,3 +26,34 @@ $(function() {
 
 window.EditorStore = require('./stores/editorStore');
 window.EditorActions = EditorActions;
+window.Voice = require('./seqApi/voice');
+
+window.SynthRunner = require('./seqApi/synthRunner');
+
+window.audio = new AudioContext();
+window.track1 = window.audio.createGain();
+window.track1.gain.value = 0.25;
+window.track1.connect(window.audio.destination);
+
+window.synth = {
+  type: "square",
+  attackTime: .01,
+  decayTime: .1,
+  sustainLevel: .25,
+  releaseTime: 0.25,
+
+};
+
+window.synthRunner = new window.SynthRunner(
+    window.synth,
+    window.track1,
+    window.audio);
+
+window.play = function(tickLength) {
+  window.EditorStore.phrase().notes.forEach(function(note) {
+    window.synthRunner.scheduleNote(
+        note.pitch,
+        note.duration * tickLength,
+        note.position * tickLength + window.audio.currentTime);
+  });
+};

@@ -197,4 +197,8 @@ EditorStore.error = function() {
   return _error;
 };
 
+EditorStore.phrase = function () {
+  return _currentPhrase;
+};
+
 module.exports = EditorStore;
