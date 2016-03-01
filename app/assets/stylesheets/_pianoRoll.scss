@@ -1,20 +1,11 @@
 @import 'variables';
 
-.piano-roll {
-  margin: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
 .matrix {
-  height: $piano-roll-height;
   width: 66vw;
   border-top: 1px dashed $grid-color;
   border-left: 1px dashed $grid-color;
   overflow: scroll;
   padding: 5px;
-  transition: height 100ms, width 100ms;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -30,7 +21,7 @@
   border: 1px dashed $grid-color;
   margin-right: 4px;
   overflow: hidden;
-  height: $piano-roll-height;
+  /*height: $piano-roll-height;*/
   transition: height 100ms;
 }
 

@@ -33,6 +33,7 @@ Voice.prototype._disconnect = function() {
 };
 
 Voice.prototype._noteOn = function(synth, freq, time) {
+  time += 0.0125;
   this.amp.gain.setValueAtTime(0, time);
   this.osc.type = synth.type;
   this.osc.start(time);
@@ -43,16 +44,18 @@ Voice.prototype._noteOn = function(synth, freq, time) {
   this.amp.gain.setTargetAtTime(1, time, attackConstant);
 
   var decayConstant = (synth.decayTime * 2) / 10;
-  this.amp.gain.setTargetAtTime(synth.sustainLevel, time + synth.attackTime, decayConstant);
+  this.amp.gain.setTargetAtTime(synth.sustainLevel * synth.sustainLevel,
+      time + synth.attackTime, decayConstant);
 
   this.finishTime = time + synth.attackTime + synth.decayTime;
 };
 
 Voice.prototype._noteOff = function(synth, time) {
-  time = Math.max(time, this.finishTime);
+  //time = Math.max(time, this.finishTime);
+  time += 0.0125;
   var releaseConstant = (synth.releaseTime * 2) / 10;
 
-  this.amp.gain.cancelScheduledValues(time + .0001);
+  this.amp.gain.cancelScheduledValues(time);
   this.amp.gain.setTargetAtTime(0.0001, time + 0.0002, releaseConstant);
 
   var interval = (time - this.audio.currentTime) + synth.releaseTime;

@@ -88,6 +88,21 @@ module.exports = {
       actionType: EditorConstants.SET_TEMPO,
       tempo: tempo
     });
-  }
+  },
 
+  updateSynth: function(trackIdx, synthParams) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.UPDATE_SYNTH,
+      trackIdx: trackIdx,
+      synthParams: synthParams
+    });
+  },
+
+  updateTrack: function(trackIdx, trackParams) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.UPDATE_TRACK,
+      trackIdx: trackIdx,
+      synthParams: trackParams
+    });
+  }
 };

@@ -1,26 +1,31 @@
 var React = require('react');
 var PlaybackStore = require('../stores/playbackStore');
 var PlaybackActions = require('../actions/playbackActions');
+var EditorStore = require('../stores/editorStore');
+var EditorActions = require('../actions/editorActions');
 
 var Transport = React.createClass({
   getInitialState: function() {
     return {
-      isPlaying: false,
-      tempo: 120
+      isPlaying: PlaybackStore.isPlaying(),
+      tempo: EditorStore.tempo()
     };
   },
 
   componentWillMount: function() {
-    this.listener = PlaybackStore.addListener(this.onChange);
+    this.playbackListener = PlaybackStore.addListener(this.onChange);
+    this.editorListener = EditorStore.addListener(this.onChange);
   },
 
   componentWillUnmount: function() {
-    this.listener.remove();;
+    this.playbackListener.remove();
+    this.editorListener.remove();
   },
 
   onChange: function() {
     this.setState({
-      isPlaying: PlaybackStore.isPlaying()
+      isPlaying: PlaybackStore.isPlaying(),
+      tempo: EditorStore.tempo()
     });
   },
 
@@ -38,20 +43,12 @@ var Transport = React.createClass({
 
   onClickTempoDown: function(e) {
     e.preventDefault();
-    this.setState({
-      tempo: this.state.tempo - 1
-    });
-
-    EditorActions.setTempo(this.state.tempo);
+    EditorActions.setTempo(this.state.tempo - 1);
   },
 
   onClickTempoUp: function(e) {
     e.preventDefault();
-    this.setState({
-      tempo: this.state.tempo + 1
-    });
-
-    EditorActions.setTempo(this.state.tempo);
+    EditorActions.setTempo(this.state.tempo + 1);
   },
 
   render: function() {

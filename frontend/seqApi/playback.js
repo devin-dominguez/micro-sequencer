@@ -29,6 +29,9 @@ function Playback() {
 Playback.prototype.onChange = function() {
   if (this.patterns) {
     this.buildPlaybackQueue();
+    EditorStore.composition().tracks.forEach(function(track, idx) {
+      this.synthRunners[idx].track.gain.value = Math.max(0, track.volume);
+    }, this);
   }
 };
 

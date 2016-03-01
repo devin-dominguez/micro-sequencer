@@ -4,7 +4,7 @@ var Header = require('./header/header');
 var Footer = require('./footer');
 var PianoRoll = require('./editor/pianoRoll');
 var Transport = require('./transport');
-var SynthEditor = require('./editor/synthEditor');
+var TrackList = require('./editor/trackList');
 var App = React.createClass({
 
   render: function() {
@@ -14,14 +14,12 @@ var App = React.createClass({
       {this.props.children}
       <div className="editor">
 
-        <div className="settings-panel">
+        <div className="settings panel">
           <Transport/>
-          <SynthEditor />
+          <TrackList />
         </div>
 
-        <div>
-          <PianoRoll />
-        </div>
+        <PianoRoll />
 
       </div>
 

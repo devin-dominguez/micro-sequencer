@@ -14,11 +14,31 @@ window.defaultComposition = {
   tracks: [
     {
       type: "sawtooth",
+      attackTime: 0.05,
+      decayTime: 0.075,
+      sustainLevel: 0.25,
+      releaseTime: 0.1,
+      volume: 0.15,
+      pan: 0,
+    },
+
+    {
+      type: "sawtooth",
       attackTime: 0.01,
       decayTime: 0.075,
       sustainLevel: 0.25,
-      releaseTime: 1,
-      volume: 0.25,
+      releaseTime: 0.1,
+      volume: 0.15,
+      pan: 0,
+    },
+
+    {
+      type: "square",
+      attackTime: 0.01,
+      decayTime: 0.075,
+      sustainLevel: 0.25,
+      releaseTime: 0.1,
+      volume: 0.15,
       pan: 0,
     }
   ],
@@ -29,6 +49,8 @@ window.defaultComposition = {
     0: {
       length: 64,
       phrases: [
+        new Phrase({length: 64}),
+        new Phrase({length: 64}),
         new Phrase({length: 64})
       ]
     }
@@ -114,6 +136,13 @@ function _populateDestinationCellsForResize(endPosition) {
     position: _selectedNote.position,
     duration: Math.max(1, newDuration)
   };
+}
+
+function _updateSynth(trackIdx, newParams) {
+  var track = _composition.tracks[trackIdx];
+  Object.keys(track).forEach(function(param) {
+    track[param] = Number(newParams[param]) || track[param];
+  });
 }
 
 var EditorStore = new Store(Dispatcher);
@@ -205,6 +234,11 @@ EditorStore.__onDispatch = function(payload) {
       _composition.settings.tempo = payload.tempo;
       this.__emitChange();
       break;
+
+    case EditorConstants.UPDATE_SYNTH:
+      _updateSynth(payload.trackIdx, payload.synthParams);
+      this.__emitChange();
+      break;
   }
 };
 
@@ -249,6 +283,19 @@ EditorStore.phrase = function() {
 
 EditorStore.currentTrackIdx = function() {
   return _currentTrackIdx;
+};
+
+EditorStore.tracks = function() {
+  return _composition.tracks;
+};
+
+EditorStore.track = function(trackIdx) {
+  return _composition.tracks[trackIdx];
+
+};
+
+EditorStore.tempo = function() {
+  return _composition.settings.tempo;
 };
 
 module.exports = EditorStore;

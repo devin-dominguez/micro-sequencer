@@ -235,7 +235,7 @@ var PianoRoll = React.createClass({
     var cHeight = config.CELL_HEIGHT * this.numPitches;
 
     return (
-      <div className="piano-roll">
+      <div className="panel piano-roll">
         <Keyboard
           numPitches={this.numPitches}
           height={cHeight}

@@ -1,25 +1,26 @@
 @import 'variables';
 
+.settings {
+  flex-direction: column;
+  padding: 0 5px;
+}
+
 .transport {
-  margin: 5px;
   border: 1px dashed $grid-color;
   display: flex;
   justify-content: space-between;
   padding: 5px;
-  width: 280px;
 }
 
 .playback-buttons {
   display: flex;
-  width: 132px;
   align-items: center;
   justify-content: space-between;
+  width: 120px;
   .button {
-    width: 64px;
+    width: 54px;
   }
 }
-
-
 
 .tempo-control {
   display: flex;
@@ -31,21 +32,41 @@
   }
 }
 
-.button.tempo-button {
-  width: 32px;
-}
-.synth-editor {
-  padding: 5px;
+.track-list {
+  flex: 1;
   border: 1px dashed $grid-color;
-  display: flex;
+  margin-top: 15px;
+
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: $bg-color * 0.75;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $fg-color;
+  }
+
 }
 
-.envelope {
+.track-editor {
+  margin: 8px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
 
+  border: 1px dotted $grid-color;
+
+  &.current-track {
+    background-color: $grid-color;
+  }
+}
+
+.track-controls {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 280px;
   label {
     display: flex;
     align-items: center;
@@ -54,7 +75,7 @@
 
   input[type=range] {
     -webkit-appearance: none;
-    width: 200px;
+    width: 160px;
     height: 5px;
 
     &::-webkit-slider-thumb {
