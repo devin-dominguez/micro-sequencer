@@ -1,8 +1,8 @@
 # &#xb5;-seq
 
-[Heroku link][heroku] ** Forthcoming
+[sequencer.dominguezaudio.com][seq-url]
 
-[heroku]: http://www.herokuapp.com
+[seq-url]: http://sequencer.dominguezaudio.com
 
 ## Minimum Viable Product
 
