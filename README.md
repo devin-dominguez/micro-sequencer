@@ -12,8 +12,8 @@
 progress. Put an x between the brackets for a checkmark: [x] -->
 
 - [x] Create an account
-- [ ] Log in / Log out
-- [ ] Create, play, edit, and delete musical compositions
+- [x] Log in / Log out
+- [o] Create, play, edit, and delete musical compositions
 - [ ] Browse other user's compositions
 - [ ] Tag compositions with multiple tags
 - [ ] Maintain a list of favorite compositions
@@ -39,31 +39,30 @@ progress. Put an x between the brackets for a checkmark: [x] -->
 
 **Objective:** Functioning rails project with Authentication
 
-- [ ] create new project
-- [ ] create `User` model
-- [ ] authentication
-- [ ] user signup/signin pages
-- [ ] blank landing page after signin
+- [x] create new project
+- [x] create `User` model
+- [x] authentication
+- [x] user signup/signin pages
 
 ### Phase 2: Simple Composition CRUD (2.5 days)
 
 **Objective:** Simple Compositions can be created, read, edited and destroyed through
 the API.
 
-- [ ] create `Composition` model
-- [ ] CRUD API for Composition (`CompositionsController`)
-- [ ] implement Sequencer API for single track/pattern/voice composition
-- [ ] implement sequencer API for single channel playback
-- [ ] test out API interactions in console
+- [x] create `Composition` model
+- [x] CRUD API for Composition (`CompositionsController`)
+- [x] implement Sequencer API for single track/pattern/voice composition
+- [x] implement sequencer API for single channel playback
+- [x] test out API interactions in console
 
 ### Phase 3: Flux, Router, and Basic Views (1.5 days)
 
 **Objective** Compositions can be edited using a piano-roll GUI.
 
-- [ ] setup the flux loop with skeleton files
-- [ ] setup the React Router
-- [ ] create piano roll component
-- [ ] create transport component
+- [x] setup the flux loop with skeleton files
+- [x] setup the React Router
+- [x] create piano roll component
+- [x] create transport component
 - [ ] create settings component
 
 ### Phase 4: Save and Load Compositions with GUI (0.5 days)
