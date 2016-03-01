@@ -14,16 +14,13 @@ var App = React.createClass({
       {this.props.children}
       <div className="editor">
 
-        <div>
+        <div className="settings-panel">
           <Transport/>
+          <SynthEditor />
         </div>
 
         <div>
           <PianoRoll />
-        </div>
-
-        <div>
-          <SynthEditor />
         </div>
 
       </div>
