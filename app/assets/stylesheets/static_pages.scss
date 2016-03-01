@@ -8,6 +8,8 @@
 @import 'modal';
 @import 'session';
 @import 'pianoRoll';
+@import 'transport';
+@import 'synthEditor';
 
 body {
   background: $bg-color;
@@ -30,7 +32,6 @@ a {
   flex-direction: column;
 }
 
-
 .footer {
   border-top: 1px solid $fg-color;
   padding: 10px 20px;
@@ -41,7 +42,11 @@ a {
 }
 
 .editor {
+  margin: 5px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .button {

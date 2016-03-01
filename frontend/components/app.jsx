@@ -3,6 +3,8 @@ var React = require('react');
 var Header = require('./header/header');
 var Footer = require('./footer');
 var PianoRoll = require('./editor/pianoRoll');
+var Transport = require('./transport');
+var SynthEditor = require('./editor/synthEditor');
 var App = React.createClass({
 
   render: function() {
@@ -11,8 +13,21 @@ var App = React.createClass({
       <Header />
       {this.props.children}
       <div className="editor">
-        <PianoRoll />
+
+        <div>
+          <Transport/>
+        </div>
+
+        <div>
+          <PianoRoll />
+        </div>
+
+        <div>
+          <SynthEditor />
+        </div>
+
       </div>
+
       <Footer />
       </div>
     );

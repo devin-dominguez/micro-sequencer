@@ -3,7 +3,22 @@ var Store = require('flux/utils').Store;
 var Phrase = require('../seqApi/phrase');
 var EditorConstants = require('../constants/editorConstants');
 
-var _currentPhrase = new Phrase({length: 128});
+window.composition = {
+  playBackSettings: {
+    synth: {
+      type: "square",
+      attackTime: 0.01,
+      decayTime: 0.1,
+      sustainLevel: 0.25,
+      releaseTime: 0.01
+    },
+    tempo: 120
+  },
+  phrase: new Phrase({length: 16})
+};
+
+var _composition = window.composition;
+var _currentPhrase = _composition.phrase;
 
 var _error = "";
 
@@ -164,6 +179,11 @@ EditorStore.__onDispatch = function(payload) {
       _selectedKey = payload.keyPitch;
       this.__emitChange();
       break;
+
+    case EditorConstants.SET_TEMPO:
+      _composition.playBackSettings.tempo = payload.tempo;
+      this.__emitChange();
+      break;
   }
 };
 
@@ -196,6 +216,11 @@ EditorStore.selectedKey = function() {
 EditorStore.error = function() {
   return _error;
 };
+
+EditorStore.composition = function() {
+  return _composition;
+};
+
 
 EditorStore.phrase = function () {
   return _currentPhrase;

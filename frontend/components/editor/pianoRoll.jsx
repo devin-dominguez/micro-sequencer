@@ -1,6 +1,7 @@
 var React = require('react');
 var EditorStore = require('../../stores/editorStore');
 var EditorActions = require('../../actions/editorActions');
+var PlaybackStore = require('../../stores/playbackStore');
 var SeqConfig = require('../../seqApi/config');
 var config = require('../../constants/editorConstants');
 var Cell = require('./cell');
@@ -10,12 +11,16 @@ var Keyboard = require('./keyboard');
 var PianoRoll = React.createClass({
   getInitialState: function() {
     return {
-      length: EditorStore.phraseLength()
+      length: EditorStore.phraseLength(),
+      currentTick: 0,
+      isStopped: true
     };
   },
 
   componentWillMount: function() {
-    this.listener = EditorStore.addListener(this.onChange);
+    this.editorListener = EditorStore.addListener(this.onChange);
+    this.playBackListener = PlaybackStore.addListener(this.onChange);
+
     this.numPitches = SeqConfig.MAX_PITCH - SeqConfig.MIN_PITCH + 1;
     this.cellMap = {};
     this.currentCell = {};
@@ -32,12 +37,15 @@ var PianoRoll = React.createClass({
   },
 
   componentWillUnmount: function() {
-    this.listener.remove();
+    this.editorListener.remove();
+    this.playbackListener.remove();
   },
 
   onChange: function() {
     this.setState({
-      length: EditorStore.phraseLength()
+      length: EditorStore.phraseLength(),
+      isStopped: PlaybackStore.isStopped(),
+      currentTick: PlaybackStore.currentTick()
     });
     window.requestAnimationFrame(this.draw);
   },
@@ -78,6 +86,12 @@ var PianoRoll = React.createClass({
       ctx.lineTo(x * config.CELL_WIDTH, height);
       ctx.stroke();
       ctx.closePath();
+    }
+
+    if (!this.state.isStopped) {
+      ctx.globalAlpha = 0.125;
+      ctx.fillRect(this.state.currentTick * config.CELL_WIDTH, 0,
+          config.CELL_WIDTH, height);
     }
 
     ctx.globalAlpha = 1;

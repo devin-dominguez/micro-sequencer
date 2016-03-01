@@ -1,0 +1,37 @@
+@import 'variables';
+
+.transport {
+  margin: 5px;
+  border: 1px dashed $grid-color;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  width: 280px;
+}
+
+.playback-buttons {
+  display: flex;
+  width: 132px;
+  align-items: center;
+  justify-content: space-between;
+  .button {
+    width: 64px;
+  }
+}
+
+
+
+.tempo-control {
+  display: flex;
+  width: 100px;
+  align-items: center;
+  justify-content: space-between;
+  .button {
+    width: 32px;
+  }
+}
+
+
+.button.tempo-button {
+  width: 32px;
+}

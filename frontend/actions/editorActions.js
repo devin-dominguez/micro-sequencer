@@ -83,4 +83,11 @@ module.exports = {
     });
   },
 
+  setTempo: function(tempo) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.SET_TEMPO,
+      tempo: tempo
+    });
+  }
+
 };

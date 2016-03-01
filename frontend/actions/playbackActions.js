@@ -13,6 +13,30 @@ module.exports = {
     Dispatcher.dispatch({
       actionType: PlaybackConstants.DEMO_NOTE_OFF
     });
+  },
+
+  play: function() {
+    Dispatcher.dispatch({
+      actionType: PlaybackConstants.PLAY,
+    });
+  },
+
+  pause: function() {
+    Dispatcher.dispatch({
+      actionType: PlaybackConstants.PAUSE,
+    });
+  },
+
+  stop: function() {
+    Dispatcher.dispatch({
+      actionType: PlaybackConstants.STOP,
+    });
+  },
+
+  tick: function() {
+    Dispatcher.dispatch({
+      actionType: PlaybackConstants.TICK,
+    });
   }
 
 };

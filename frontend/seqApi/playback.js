@@ -1,7 +1,14 @@
+var SynthRunner = require('./synthRunner');
+var EditorStore = require('../stores/editorStore');
+var PlaybackActions = require('../actions/playbackActions');
+
 var audio = new window.AudioContext();
+var track = audio.createGain();
+track.gain.value = .25;
+track.connect(audio.destination);
 
 var _lookAhead = 0.1;
-var _interval = 0.5;
+var _interval = 0.1;
 
 function Playback() {
   this.playbackQueue = {};
@@ -11,40 +18,79 @@ function Playback() {
   this.nextNoteTime = 0;
   this.isPlaying = false;
 
-  this.phraseLength = 128;
+  this.listener = EditorStore.addListener(this.onChange.bind(this));
 }
 
-Playback.prototype._incrementTick = function() {
-  this.nextNoteTime += this.tickDuration;
-  this.currentTick = (this.currentTick + 1) % this.phraseLength;
+Playback.prototype.onChange = function() {
+  if (this.phrase) {
+    this.buildPlaybackQueue();
+  }
 };
 
-function _scheduler() {
-  while (this.nextNoteTime < audio.currentTime + _lookAhead) {
-
-    if (this.playbackQueue[this.currentTick]) {
-
-      while (this.playbackQueue[this.currentTick].length) {
-        var note = this.playbackQueue[this.currentTick].shift();
-        this.currentSynthRunner.scheduleNote(note.pitch,
-            note.duration * this.tickDuration,
-            this.nextNoteTime);
-      }
-    }
-    this.incrementTick();
-  }
-}
+Playback.prototype.loadComposition = function() {
+  var composition = EditorStore.composition();
+  this.phrase = composition.phrase;
+  this.synthRunner = new SynthRunner(composition.playBackSettings.synth, track, audio);
+  this.playBackSettings = composition.playBackSettings;
+};
 
 Playback.prototype.play = function() {
-  this.nextNoteTime = audio.currentTime;
-  this.isPlaying = true;
-  this.buildPlaybackQueue();
-  this.intervalId = window.setInterval(this._scheduler.bind(this), _interval);
+  if (!this.isPlaying) {
+    this.nextNoteTime = audio.currentTime;
+    this.isPlaying = true;
+    this.buildPlaybackQueue();
+    this.intervalId = window.setInterval(this._scheduler.bind(this), _interval);
+  }
+};
+
+Playback.prototype.pause = function() {
+  if (this.isPlaying) {
+    this.isPlaying = false;
+    window.clearInterval(this.intervalId);
+  }
 };
 
 Playback.prototype.stop = function() {
-  this.isPlaying = false;
-  window.clearInterval(this.intervalId);
+  this.pause();
+  this.currentTick = 0;
+};
+
+Playback.prototype.demoVoiceOn = function(pitch) {
+  this.demoVoiceOff();
+  this.demoVoice = this.synthRunner.noteOn(pitch);
+};
+
+Playback.prototype.demoVoiceOff = function() {
+  if (this.demoVoice) {
+    this.synthRunner.noteOff(this.demoVoice);
+    this.demoVoice = null;
+  }
+};
+
+Playback.prototype._incrementTick = function() {
+  this.tickDuration =  60 / this.playBackSettings.tempo / 4;
+  this.nextNoteTime += this.tickDuration;
+  this.currentTick = (this.currentTick + 1) % this.phrase.length;
+
+  PlaybackActions.tick();
+};
+
+Playback.prototype. _scheduler = function() {
+  while (this.nextNoteTime < audio.currentTime + _lookAhead) {
+
+    if (this.playbackQueue[this.currentTick]) {
+      var idx = 0;
+
+      while (this.playbackQueue[this.currentTick][idx]) {
+        var note = this.playbackQueue[this.currentTick][idx];
+        this.synthRunner.scheduleNote(note.pitch,
+            note.duration * this.tickDuration,
+            this.nextNoteTime);
+        idx++;
+      }
+    }
+    this._incrementTick();
+  }
 };
 
 Playback.prototype.buildPlaybackQueue = function() {
@@ -53,9 +99,9 @@ Playback.prototype.buildPlaybackQueue = function() {
     if (!this.playbackQueue[note.position]) {
       this.playbackQueue[note.position] = [note];
     } else {
-      this.playbackQueue.push(note);
+      this.playbackQueue[note.position].push(note);
     }
-  });
+  }, this);
 };
 
 

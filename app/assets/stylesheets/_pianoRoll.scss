@@ -1,7 +1,7 @@
 @import 'variables';
 
 .piano-roll {
-  margin-top: 50px;
+  margin: 5px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -9,7 +9,7 @@
 
 .matrix {
   height: $piano-roll-height;
-  width: 80vw;
+  width: 90vw;
   border-top: 1px dashed $grid-color;
   border-left: 1px dashed $grid-color;
   overflow: scroll;
