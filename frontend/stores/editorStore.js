@@ -3,22 +3,45 @@ var Store = require('flux/utils').Store;
 var Phrase = require('../seqApi/phrase');
 var EditorConstants = require('../constants/editorConstants');
 
-window.composition = {
-  playBackSettings: {
-    synth: {
-      type: "square",
-      attackTime: 0.01,
-      decayTime: 0.1,
-      sustainLevel: 0.25,
-      releaseTime: 0.01
-    },
-    tempo: 120
+window.defaultComposition = {
+  settings: {
+    title: "untitled",
+    tempo: 125,
+    hilite: 4,
+    tpb: 4
   },
-  phrase: new Phrase({length: 16})
+
+  tracks: [
+    {
+      level: 0.25,
+      pan: 0,
+      synth: {
+        type: "sawtooth",
+        attackTime: 0.01,
+        decayTime: 0.075,
+        sustainLevel: 0.25,
+        releaseTime: 1
+      }
+    }
+  ],
+
+  sequence: [0],
+
+  patterns: {
+    0: {
+      length: 64,
+      phrases: [
+        new Phrase({length: 64})
+      ]
+    }
+  }
 };
 
-var _composition = window.composition;
-var _currentPhrase = _composition.phrase;
+var _composition = window.defaultComposition;
+var _currentTrackIdx = 0;
+var _currentTrack = _composition.tracks[_currentTrackIdx];
+var _currentPattern = _composition.patterns[0];
+var _currentPhrase = _currentPattern.phrases[_currentTrackIdx];
 
 var _error = "";
 
@@ -181,7 +204,7 @@ EditorStore.__onDispatch = function(payload) {
       break;
 
     case EditorConstants.SET_TEMPO:
-      _composition.playBackSettings.tempo = payload.tempo;
+      _composition.settings.tempo = payload.tempo;
       this.__emitChange();
       break;
   }
@@ -222,8 +245,15 @@ EditorStore.composition = function() {
 };
 
 
-EditorStore.phrase = function () {
+EditorStore.phrase = function() {
   return _currentPhrase;
 };
 
+EditorStore.currentTrackIdx = function() {
+  return _currentTrackIdx;
+};
+
 module.exports = EditorStore;
+//var _currentTrack = _composition.tracks[_currentTrackIdx];
+//var _currentPattern = _composition.patterns[0];
+//var _currentPhrase = _currentPattern.phrases[_currentTrackIdx];
