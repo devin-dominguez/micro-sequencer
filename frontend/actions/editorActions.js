@@ -98,11 +98,11 @@ module.exports = {
     });
   },
 
-  updateTrack: function(trackIdx, trackParams) {
+  selectTrack: function(trackIdx) {
     Dispatcher.dispatch({
-      actionType: EditorConstants.UPDATE_TRACK,
+      actionType: EditorConstants.SELECT_TRACK,
       trackIdx: trackIdx,
-      synthParams: trackParams
     });
-  }
+  },
+
 };

@@ -41,11 +41,18 @@ var TrackEditor = React.createClass({
     EditorActions.updateSynth(this.props.trackIdx, newState);
   },
 
+  onDoubleClick: function(e) {
+    e.preventDefault();
+    EditorActions.selectTrack(this.props.trackIdx);
+  },
+
   render: function() {
     var className = this.state.isCurrentTrack ? "current-track" : "";
 
     return (
-      <div className={"track-editor " + className}>
+      <div className={"track-editor " + className}
+        onDoubleClick={this.onDoubleClick}
+      >
         <div className="track-details">
           <h2>{"Track " + (this.props.trackIdx + 1)}</h2>
         </div>

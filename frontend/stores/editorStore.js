@@ -58,9 +58,10 @@ window.defaultComposition = {
 };
 
 var _composition = window.defaultComposition;
+var _currentPattern = _composition.patterns[0];
+
 var _currentTrackIdx = 0;
 var _currentTrack = _composition.tracks[_currentTrackIdx];
-var _currentPattern = _composition.patterns[0];
 var _currentPhrase = _currentPattern.phrases[_currentTrackIdx];
 
 var _error = "";
@@ -145,14 +146,18 @@ function _updateSynth(trackIdx, newParams) {
   });
 }
 
+function _selectTrack(trackIdx) {
+  _currentTrackIdx = trackIdx;
+  _currentTrack = _composition.tracks[_currentTrackIdx];
+  _currentPhrase = _currentPattern.phrases[_currentTrackIdx];
+}
+
 var EditorStore = new Store(Dispatcher);
 
 EditorStore.__onDispatch = function(payload) {
   switch (payload.actionType) {
-
-    case EditorConstants.LOAD_PHRASE:
-      _error = "";
-      _currentPhrase = new Phrase(payload.phrase);
+    case EditorConstants.SELECT_TRACK:
+      _selectTrack(payload.trackIdx);
       _resetCells();
       _populateNoteCells();
       this.__emitChange();
