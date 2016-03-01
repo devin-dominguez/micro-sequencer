@@ -11,10 +11,13 @@ var mtof = [];
   }
 })(440);
 
-function SynthRunner(synth, track, audio) {
+function SynthRunner(synth, audio) {
   this.synth = synth;
   this.audio = audio;
-  this.track = track;
+
+  this.track = this.audio.createGain();
+  this.track.gain.value = this.synth.volume;
+  this.track.connect(this.audio.destination);
 }
 
 ///////////////

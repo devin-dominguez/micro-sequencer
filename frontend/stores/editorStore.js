@@ -13,15 +13,13 @@ window.defaultComposition = {
 
   tracks: [
     {
-      level: 0.25,
+      type: "sawtooth",
+      attackTime: 0.01,
+      decayTime: 0.075,
+      sustainLevel: 0.25,
+      releaseTime: 1,
+      volume: 0.25,
       pan: 0,
-      synth: {
-        type: "sawtooth",
-        attackTime: 0.01,
-        decayTime: 0.075,
-        sustainLevel: 0.25,
-        releaseTime: 1
-      }
     }
   ],
 

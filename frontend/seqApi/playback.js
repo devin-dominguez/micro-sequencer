@@ -38,7 +38,7 @@ Playback.prototype.loadComposition = function() {
   this.patterns = composition.patterns;
   this.settings = composition.settings;
   this.synthRunners = composition.tracks.map(function(track) {
-    return new SynthRunner(track.synth, masterTrack, audio);
+    return new SynthRunner(track, audio);
   }, this);
 };
 
