@@ -35,7 +35,6 @@ var TrackListing = React.createClass({
     e.preventDefault();
     var newState = {};
     newState[type] = e.target.value;
-    this.setState(newState);
     EditorActions.updateSynth(this.props.trackIdx, newState);
   },
 

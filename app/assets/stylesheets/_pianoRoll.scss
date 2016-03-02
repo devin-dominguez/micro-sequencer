@@ -10,15 +10,6 @@
   border-left: 1px dashed $grid-color;
   overflow: scroll;
   padding: 5px;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    background-color: $bg-color * 0.75;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: $fg-color;
-  }
 }
 
 .keyboard {

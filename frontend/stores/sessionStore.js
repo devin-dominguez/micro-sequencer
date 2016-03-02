@@ -27,13 +27,11 @@ SessionStore.__onDispatch = function(payload) {
       break;
 
     case SessionConstants.END_SESSION:
-      console.log("store");
       logout();
       this.__emitChange();
       break;
 
     case SessionConstants.SESSION_ERROR:
-      console.log(payload.errors);
       setErrors(payload.errors);
       this.__emitChange();
       break;

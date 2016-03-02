@@ -6,6 +6,9 @@ var PianoRoll = require('./editor/pianoRoll');
 var Transport = require('./transport');
 var TrackList = require('./editor/trackList');
 var TrackEditor = require('./editor/trackEditor');
+
+var BrowseForm = require('./browser/browseForm');
+
 var App = React.createClass({
 
   render: function() {

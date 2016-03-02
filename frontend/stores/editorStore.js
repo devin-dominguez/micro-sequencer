@@ -58,7 +58,10 @@ window.defaultComposition = {
 };
 
 var _composition = window.defaultComposition;
-var _currentPattern = _composition.patterns[0];
+var _currentSeqIdx = 0;
+
+var _currentPatternId = _composition.sequence[_currentSeqIdx];
+var _currentPattern = _composition.patterns[_currentPatternId];
 
 var _currentTrackIdx = 0;
 var _currentTrack = _composition.tracks[_currentTrackIdx];
@@ -73,7 +76,33 @@ var _destinationCells = {};
 var _selectedNote = null;
 var _offset = 0;
 
+_loadComposition(JSON.stringify(window.defaultComposition));
+
 var _selectedKey = null;
+
+function _parseComposition(compoStr) {
+  var composition =  JSON.parse(compoStr);
+  Object.keys(composition.patterns).forEach(function(patternId) {
+    composition.patterns[patternId].phrases =
+      composition.patterns[patternId].phrases.map(function(phrase) {
+        return new Phrase(phrase);
+      });
+  });
+
+  return composition;
+}
+
+function _loadComposition(compoString) {
+  _composition = _parseComposition(compoString);
+  _currentSeqIdx = 0;
+
+  _currentPatternId = _composition.sequence[_currentSeqIdx];
+  _currentPattern = _composition.patterns[_currentPatternId];
+
+  _currentTrackIdx = 0;
+  _currentTrack = _composition.tracks[_currentTrackIdx];
+  _currentPhrase = _currentPattern.phrases[_currentTrackIdx];
+}
 
 function _cellKey(pitch, position) {
   return pitch * _currentPhrase.length + position;

@@ -3,8 +3,6 @@ var Store = require('flux/utils').Store;
 var PlaybackConstants = require('../constants/playbackConstants');
 var Playback = require('../seqApi/playback');
 
-var EditorStore = require('./editorStore');
-
 var _playback = new Playback();
 _playback.loadComposition();
 

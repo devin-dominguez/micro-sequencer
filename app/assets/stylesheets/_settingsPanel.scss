@@ -40,15 +40,6 @@
   margin: 16px 0;
   padding: 8px;
   overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    background-color: $bg-color * 0.75;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: $fg-color;
-  }
 }
 
 .track-listing {
@@ -101,26 +92,5 @@
     align-items: center;
     justify-content: space-between;
     margin: 2px 0;
-  }
-}
-
-input[type=range] {
-  -webkit-appearance: none;
-  width: 150px;
-  height: 5px;
-
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    border: 1px solid $fg-color;
-    background-color: $fg-color;
-    width: 16px;
-    height: 8px;
-  }
-
-  &::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 100%;
-    background-color: $bg-color;
-    border: 1px solid $fg-color;
   }
 }

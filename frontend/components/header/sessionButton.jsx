@@ -6,7 +6,6 @@ var SessionActions = require('../../actions/sessionActions');
 
 var SessionButton = React.createClass({
   logout: function() {
-    console.log("button");
     SessionActions.logout();
   },
 
