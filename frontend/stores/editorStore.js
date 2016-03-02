@@ -140,7 +140,6 @@ function _populateDestinationCellsForResize(endPosition) {
 }
 
 function _updateSynth(trackIdx, newParams) {
-  console.log(newParams);
   var track = _composition.tracks[trackIdx];
   Object.keys(track).forEach(function(param) {
     if (param !== "type") {
