@@ -77,7 +77,18 @@
   flex-direction: column;
 
   border: 1px dashed $grid-color;
+}
 
+#waveform {
+  text-align: center;
+  color: $fg-color;
+  background: transparent;
+  border: 1px solid $fg-color;
+
+  option {
+    background: $bg-color;
+
+  }
 }
 
 .track-controls {

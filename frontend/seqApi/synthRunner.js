@@ -18,6 +18,8 @@ function SynthRunner(synth, audio) {
   this.track = this.audio.createGain();
   this.track.gain.value = this.synth.volume;
   this.track.connect(this.audio.destination);
+
+  this.voices = {};
 }
 
 ///////////////
@@ -28,10 +30,11 @@ SynthRunner.prototype.noteOn = function(pitch, time) {
   time = time || this.audio.currentTime;
 
   var freq = mtof[pitch];
-  var voice = new Voice(this.track, this.audio);
+  var voice = new Voice(this.track, this.audio, this.voiceDone.bind(this));
 
   voice._noteOn(this.synth, freq, time);
 
+  this.voices[voice.idx] = voice;
   return voice;
 };
 
@@ -47,5 +50,15 @@ SynthRunner.prototype.scheduleNote = function(pitch, duration, time) {
   var voice = this.noteOn(pitch, time);
   this.noteOff(voice, endTime);
 };
+
+SynthRunner.prototype.panic = function() {
+  Object.keys(this.voices).forEach(function(voiceIdx) {
+    this.voices[voiceIdx]._noteOff(this.synth, this.audio.currentTime);
+  }, this);
+};
+
+SynthRunner.prototype.voiceDone = function(voiceIdx) {
+  delete this.voices[voiceIdx];
+}
 
 module.exports = SynthRunner;

@@ -2,9 +2,13 @@
 // CREATION //
 //////////////
 
-function Voice(track, audio) {
+var idx = 0;
+
+function Voice(track, audio, callback) {
+  this.idx = idx++;
   this.track = track;
   this.audio = audio;
+  this.callback = callback;
 
   this._connect();
 }
@@ -30,6 +34,10 @@ Voice.prototype._disconnect = function() {
   this.osc.stop(0);
   this.osc.disconnect();
   this.amp.disconnect();
+
+  if (this.callback) {
+    this.callback(this.idx);
+  }
 };
 
 Voice.prototype._noteOn = function(synth, freq, time) {
@@ -51,7 +59,6 @@ Voice.prototype._noteOn = function(synth, freq, time) {
 };
 
 Voice.prototype._noteOff = function(synth, time) {
-  //time = Math.max(time, this.finishTime);
   time += 0.0125;
   var releaseConstant = (synth.releaseTime * 2) / 10;
 

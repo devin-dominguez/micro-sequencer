@@ -26,6 +26,12 @@ function Playback() {
   this.patternLoop = false;
 }
 
+Playback.prototype.panic = function() {
+  this.synthRunners.forEach(function(synthRunner) {
+    synthRunner.panic();
+  });
+};
+
 Playback.prototype.onChange = function() {
   if (this.patterns) {
     this.buildPlaybackQueue();
@@ -55,6 +61,7 @@ Playback.prototype.play = function() {
 };
 
 Playback.prototype.pause = function() {
+  this.panic();
   if (this.isPlaying) {
     this.isPlaying = false;
     window.clearInterval(this.intervalId);
