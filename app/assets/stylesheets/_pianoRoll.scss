@@ -1,7 +1,11 @@
 @import 'variables';
+.piano-roll {
+  width: 1px;
+  flex: 1;
+}
 
 .matrix {
-  width: 66vw;
+  flex: 1;
   border-top: 1px dashed $grid-color;
   border-left: 1px dashed $grid-color;
   overflow: scroll;
@@ -21,7 +25,6 @@
   border: 1px dashed $grid-color;
   margin-right: 4px;
   overflow: hidden;
-  /*height: $piano-roll-height;*/
   transition: height 100ms;
 }
 

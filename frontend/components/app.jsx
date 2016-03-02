@@ -5,6 +5,7 @@ var Footer = require('./footer');
 var PianoRoll = require('./editor/pianoRoll');
 var Transport = require('./transport');
 var TrackList = require('./editor/trackList');
+var TrackEditor = require('./editor/trackEditor');
 var App = React.createClass({
 
   render: function() {
@@ -15,8 +16,9 @@ var App = React.createClass({
       <div className="editor">
 
         <div className="settings panel">
-          <Transport/>
+          <Transport />
           <TrackList />
+          <TrackEditor />
         </div>
 
         <PianoRoll />

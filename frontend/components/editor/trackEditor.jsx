@@ -1,15 +1,13 @@
 var React = require('react');
 var EditorStore = require('../../stores/editorStore');
-var LinkedStateMixin = require('react-addons-linked-state-mixin');
+var EditorActions = require('../../actions/editorActions');
 
 var TrackEditor = React.createClass({
 
   getInitialState: function() {
-    var isCurrentTrack = this.props.trackIdx === EditorStore.currentTrackIdx();
-    var track = EditorStore.track(this.props.trackIdx);
+    var track = EditorStore.currentTrack();
     return {
-      isCurrentTrack: isCurrentTrack,
-      volume: track.volume,
+      trackIdx: EditorStore.currentTrackIdx(),
       attackTime: track.attackTime,
       decayTime: track.decayTime,
       sustainLevel: track.sustainLevel,
@@ -27,46 +25,44 @@ var TrackEditor = React.createClass({
   },
 
   onChange: function() {
-    var isCurrentTrack = this.props.trackIdx === EditorStore.currentTrackIdx();
+    var track = EditorStore.currentTrack();
     this.setState({
-      isCurrentTrack: isCurrentTrack,
+      trackIdx: EditorStore.currentTrackIdx(),
+      attackTime: track.attackTime,
+      decayTime: track.decayTime,
+      sustainLevel: track.sustainLevel,
+      releaseTime: track.releaseTime,
+      type: track.type
     });
   },
 
   synthParamChange: function(type, e) {
     e.preventDefault();
-    newState = {};
+    var newState = {};
     newState[type] = e.target.value;
     this.setState(newState);
-    EditorActions.updateSynth(this.props.trackIdx, newState);
-  },
-
-  onDoubleClick: function(e) {
-    e.preventDefault();
-    EditorActions.selectTrack(this.props.trackIdx);
+    EditorActions.updateSynth(this.state.trackIdx, newState);
   },
 
   render: function() {
-    var className = this.state.isCurrentTrack ? "current-track" : "";
-
     return (
-      <div className={"track-editor " + className}
-        onDoubleClick={this.onDoubleClick}
-      >
-        <div className="track-details">
-          <h2>{"Track " + (this.props.trackIdx + 1)}</h2>
-        </div>
+      <div className="track-editor ">
+        <h2>Sound Design</h2>
         <div className="track-controls">
           <label>
-            Volume
-            <input id="volume"
-              type="range"
-              step="0.0001"
-              min="0"
-              max="0.25"
-              value={this.state.volume}
-              onChange={this.synthParamChange.bind(this, "volume")}
-            />
+            Waveform
+            <select id="waveform"
+              value={this.state.type}
+              onChange={this.synthParamChange.bind(this, "type")}
+            >
+              <option value="sawtooth">Saw</option>
+
+              <option value="square">Square</option>
+
+              <option value="triangle">Triangle</option>
+
+              <option value="sine">Sine</option>
+            </select>
           </label>
 
           <label>

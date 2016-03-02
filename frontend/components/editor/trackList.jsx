@@ -1,6 +1,6 @@
 var React = require('react');
 var EditorStore = require('../../stores/editorStore');
-var TrackEditor = require('./trackEditor');
+var TrackListing = require('./trackListing');
 
 var TrackList = React.createClass({
   getInitialState: function() {
@@ -26,7 +26,7 @@ var TrackList = React.createClass({
   render: function() {
     var tracks = this.state.tracks.map(function(track, idx) {
       return (
-          <TrackEditor
+          <TrackListing
             key={idx}
             trackIdx={idx}
           />
@@ -34,6 +34,7 @@ var TrackList = React.createClass({
     });
     return (
       <div className="track-list">
+        <h2>Tracks</h2>
         {tracks}
       </div>
     );
