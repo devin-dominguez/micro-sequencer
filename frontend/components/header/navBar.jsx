@@ -34,9 +34,16 @@ var NavBar = React.createClass({
     History.replace("load");
   },
 
+  onSaveClick: function(e) {
+    e.preventDefault();
+    History.replace("save");
+  },
+
   render: function() {
     var saveButton = this.state.loggedIn ?
-      <li><button className="button">Save</button></li> :
+      <li><button className="button"
+        onClick={this.onSaveClick}
+      >Save</button></li> :
       "";
     var loadButton = this.state.loggedIn ?
       <li><button className="button"

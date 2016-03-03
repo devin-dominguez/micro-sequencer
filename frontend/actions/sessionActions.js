@@ -1,5 +1,6 @@
 var Dispatcher = require('../dispatcher/dispatcher');
 var SessionConstants = require('../constants/sessionConstants');
+var BrowserActions = require('./browserActions');
 
 function failure(errors) {
   var failureAction = {
@@ -39,6 +40,7 @@ module.exports = {
           user: user
         };
       Dispatcher.dispatch(successAction);
+      BrowserActions.receiveCompositions(true);
       },
       error: failure
     };
@@ -73,6 +75,7 @@ module.exports = {
           user: user
         };
       Dispatcher.dispatch(successAction);
+      BrowserActions.receiveCompositions(true);
       },
       error: failure
     };

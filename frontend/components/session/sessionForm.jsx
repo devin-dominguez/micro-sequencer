@@ -86,19 +86,24 @@ var SessionForm = React.createClass({
 
           <label htmlFor="username">
             Username
-            <input id="username" type="text" valueLink={this.linkState("username")}/>
+            <input id="username"
+            type="text"
+            valueLink={this.linkState("username")}/>
           </label>
 
           <label htmlFor="password">
             Password
-            <input id="password" type="password" valueLink={this.linkState("password")}/>
+            <input id="password"
+            type="password"
+            valueLink={this.linkState("password")}/>
           </label>
 
           {this.errors()}
 
           <div className="modal-buttons">
             <input className="button" type="submit" value={titleText}/>
-            <button className="button" onClick={this.cancelClick}>Cancel</button>
+            <button className="button"
+            onClick={this.cancelClick}>Cancel</button>
           </div>
 
           <span className="swap-text">{swapText}

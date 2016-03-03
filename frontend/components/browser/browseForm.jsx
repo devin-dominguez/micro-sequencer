@@ -17,8 +17,11 @@ var BrowseForm = React.createClass({
   },
 
   onChange: function() {
+    var compositions = this.props.ownCompositions ?
+      BrowserStore.ownCompositions() :
+      BrowserStore.allCompositions();
     this.setState({
-      compositions: BrowserStore.allCompositions(),
+      compositions: compositions,
       searchString: BrowserStore.searchString()
     });
   },
@@ -46,9 +49,11 @@ var BrowseForm = React.createClass({
 
   loadClick: function(e) {
     e.preventDefault();
-    this.setState({
-      isConfirming: true
-    });
+    if (BrowserStore.selectedId() !== -1) {
+      this.setState({
+        isConfirming: true
+      });
+    }
   },
 
   confirmLoad: function(e) {
@@ -70,7 +75,7 @@ var BrowseForm = React.createClass({
     var confirmationModal = this.state.isConfirming ?
           (<ConfirmationModal
             message="Are you sure you want to load?"
-            submessage="Any unsaved changes will be lost"
+            submessage="Any unsaved changes will be lost."
             yesCallback={this.confirmLoad}
             noCallback={this.cancelLoad}
           />) :

@@ -34,12 +34,13 @@ class Api::CompositionsController < ApplicationController
     end
 
     if @composition.save
-      render json: ["saved!"]
+      render :show
     else
       render json: ["something went really wrong"],
         status: :unprocessable_entity
     end
   end
+
 
   private
 

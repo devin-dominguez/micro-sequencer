@@ -1,5 +1,5 @@
 user = current_user
-if user
+unless user.nil?
   json.partial! 'api/users/user', user: user
 else
   json.nullUser true

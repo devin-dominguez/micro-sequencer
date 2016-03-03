@@ -11,13 +11,17 @@ function failure(errors) {
 
 module.exports = {
   receiveCompositions: function(ownCompositions) {
+    var actionType = ownCompositions ?
+      BrowserConstants.RECEIVE_OWN_COMPOSITIONS :
+      BrowserConstants.RECEIVE_COMPOSITIONS;
+
     var ajaxOptions = {
       url: "api/compositions",
       type: "GET",
       data: {own_compositions: String(ownCompositions)},
       success: function(compositions) {
         var successAction = {
-          actionType: BrowserConstants.RECEIVE_COMPOSITIONS,
+          actionType: actionType,
           compositions: compositions
         };
       Dispatcher.dispatch(successAction);
@@ -26,6 +30,12 @@ module.exports = {
     };
 
     $.ajax(ajaxOptions);
+  },
+
+  clearOwnCompositions: function() {
+    Dispatcher.dispatch({
+      actionType: BrowserConstants.CLEAR_OWN_COMPOSITIONS
+    });
   },
 
   updateSearchString: function(newString) {

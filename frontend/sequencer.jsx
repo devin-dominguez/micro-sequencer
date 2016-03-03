@@ -8,6 +8,7 @@ var App = require('./components/app');
 var SessionModal = require('./components/session/sessionModal');
 var BrowseModal = require('./components/browser/browseModal');
 var LoadModal = require('./components/browser/loadModal');
+var SaveModal = require('./components/browser/saveModal');
 
 var SessionActions = require('./actions/sessionActions');
 var EditorActions = require('./actions/editorActions');
@@ -19,6 +20,7 @@ var routes = (
     <Route component={SessionModal} path="login" />
     <Route component={BrowseModal} path="browse" />
     <Route component={LoadModal} path="load" />
+    <Route component={SaveModal} path="save" />
   </Route>
 );
 

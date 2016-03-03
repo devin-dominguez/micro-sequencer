@@ -22,10 +22,11 @@ module.exports = {
     var ajaxOptions = {
       url: "api/compositions/",
       type: "POST",
-      data: compositionData,
-      success: function(response) {
+      data: {composition: compositionData},
+      success: function(composition) {
         var successAction = {
           actionType: EditorConstants.CREATE_COMPOSITION,
+          composition: composition
         };
       Dispatcher.dispatch(successAction);
       }

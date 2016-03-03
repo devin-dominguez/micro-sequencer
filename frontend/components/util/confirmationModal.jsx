@@ -7,8 +7,12 @@ var ConfirmationModal = React.createClass({
     return (
       <Modal>
         <div className="confirmation-modal">
-          <h3>{this.props.message}</h3>
-          <h4>{this.props.submessage}</h4>
+
+          <div className="confirmation-messages">
+            <h3>{this.props.message}</h3>
+            <h4>{this.props.submessage}</h4>
+          </div>
+
           <div className="modal-buttons">
             <button className="button"
               onClick={this.props.yesCallback}
@@ -17,6 +21,7 @@ var ConfirmationModal = React.createClass({
               onClick={this.props.noCallback}
             >No</button>
           </div>
+
         </div>
       </ Modal>
     );

@@ -3,20 +3,42 @@ var Store = require('flux/utils').Store;
 var BrowserConstants = require('../constants/browserConstants');
 
 var _compositions = [];
+var _ownCompositions = [];
+
 var _sortParam = "title";
 var _searchString = "";
 var _selectedId = -1;
 
-var BrowserStore = new Store(Dispatcher);
-
-BrowserStore.setSearch = function(str) {
-  _searchString = str;
+function _filterCompositions(compositions) {
+  if (_searchString) {
+    var searchString = _searchString.replace(/\s+/g, '').toLowerCase();
+    var regExp = new RegExp(searchString.toLowerCase());
+    compositions = compositions.filter(function(composition) {
+      var item = composition[_sortParam].replace(/\s+/g, '').toLowerCase();
+      return regExp.test(item);
+    });
+  }
+  return compositions.sort(function(a, b) {
+    return (a[_sortParam] < b[_sortParam]) ? -1 : 1;
+  });
 }
+
+var BrowserStore = new Store(Dispatcher);
 
 BrowserStore.__onDispatch = function(payload) {
   switch (payload.actionType) {
     case BrowserConstants.RECEIVE_COMPOSITIONS:
       _compositions = payload.compositions;
+      this.__emitChange();
+      break;
+
+    case BrowserConstants.CLEAR_OWN_COMPOSITIONS:
+      _ownCompositions = [];
+      this.__emitChange();
+      break;
+
+    case BrowserConstants.RECEIVE_OWN_COMPOSITIONS:
+      _ownCompositions = payload.compositions;
       this.__emitChange();
       break;
 
@@ -46,17 +68,17 @@ BrowserStore.selectedId = function() {
 
 BrowserStore.allCompositions = function() {
   var compositions = _compositions.slice();
-  if (_searchString) {
-    var searchString = _searchString.replace(/\s+/g, '').toLowerCase();
-    var regExp = new RegExp(searchString.toLowerCase());
-    compositions = compositions.filter(function(composition) {
-      var item = composition[_sortParam].replace(/\s+/g, '').toLowerCase();
-      return regExp.test(item);
-    });
-  }
-  return compositions.sort(function(a, b) {
-    return (a[_sortParam] < b[_sortParam]) ? -1 : 1;
+  return _filterCompositions(compositions);
+};
+
+BrowserStore.ownCompositions = function() {
+  var compositions = _ownCompositions.map(function(composition) {
+    return  {
+      title: composition.title,
+      id: composition.id
+    };
   });
+  return _filterCompositions(compositions);
 };
 
 module.exports = BrowserStore;

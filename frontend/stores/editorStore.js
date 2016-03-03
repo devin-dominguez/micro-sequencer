@@ -56,7 +56,7 @@ window.defaultComposition = {
   }
 };
 
-var _title = "Untitled Composition";
+var _title = "Untitled";
 var _public = true;
 
 var _composition;
@@ -190,6 +190,7 @@ var EditorStore = new Store(Dispatcher);
 
 EditorStore.__onDispatch = function(payload) {
   switch (payload.actionType) {
+    case EditorConstants.CREATE_COMPOSITION:
     case EditorConstants.LOAD_COMPOSITION:
       _title = payload.composition.title;
       _loadComposition(payload.composition.composition);
@@ -295,6 +296,10 @@ EditorStore.compositionData = function() {
     "public": _public,
     composition: JSON.stringify(_composition)
   };
+};
+
+EditorStore.title = function() {
+  return _title.slice();
 };
 
 EditorStore.phraseLength = function() {

@@ -1,4 +1,4 @@
-var Dispathcer = require('../dispatcher/dispatcher');
+var Dispatcher = require('../dispatcher/dispatcher');
 var Store = require('flux/utils').Store;
 
 var SessionConstants = require('../constants/sessionConstants');
@@ -7,7 +7,7 @@ var loggedIn = false;
 var currentUser = {};
 var errors = [];
 
-var SessionStore = new Store(Dispathcer);
+var SessionStore = new Store(Dispatcher);
 
 SessionStore.__onDispatch = function(payload) {
   switch (payload.actionType) {

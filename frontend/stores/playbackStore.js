@@ -1,6 +1,7 @@
 var Dispatcher = require('../dispatcher/dispatcher');
 var Store = require('flux/utils').Store;
 var PlaybackConstants = require('../constants/playbackConstants');
+var EditorConstants = require('../constants/editorConstants');
 var Playback = require('../seqApi/playback');
 
 var _playback = new Playback();
@@ -42,8 +43,8 @@ PlaybackStore.__onDispatch =  function(payload) {
       this.__emitChange();
       break;
 
-    case PlaybackConstants.LOAD_COMPOSITION:
-      _playback.loadComposition(payload.composition);
+    case EditorConstants.LOAD_COMPOSITION:
+      _playback.loadComposition();
       break;
 
     case PlaybackConstants.TICK:
