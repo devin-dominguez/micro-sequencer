@@ -12,8 +12,23 @@ module.exports = {
           composition: composition
         };
       Dispatcher.dispatch(successAction);
-      },
-      //error: failure
+      }
+    };
+
+    $.ajax(ajaxOptions);
+  },
+
+  createComposition: function (compositionData) {
+    var ajaxOptions = {
+      url: "api/compositions/",
+      type: "POST",
+      data: compositionData,
+      success: function(response) {
+        var successAction = {
+          actionType: EditorConstants.CREATE_COMPOSITION,
+        };
+      Dispatcher.dispatch(successAction);
+      }
     };
 
     $.ajax(ajaxOptions);

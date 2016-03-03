@@ -289,6 +289,14 @@ EditorStore.__onDispatch = function(payload) {
   }
 };
 
+EditorStore.compositionData = function() {
+  return {
+    title: _title,
+    "public": _public,
+    composition: JSON.stringify(_composition)
+  };
+};
+
 EditorStore.phraseLength = function() {
   return _currentPhrase.length;
 };

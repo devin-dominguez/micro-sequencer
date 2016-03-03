@@ -29,6 +29,7 @@ $(function() {
   ReactDOM.render(<Router history={History}>{routes}</Router>, contentElement);
 });
 
+window.SessionStore = require('./stores/sessionStore');
 
 window.EditorStore = require('./stores/editorStore');
 window.EditorActions = EditorActions;

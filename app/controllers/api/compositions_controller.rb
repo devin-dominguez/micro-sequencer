@@ -22,14 +22,22 @@ class Api::CompositionsController < ApplicationController
 
   def create
     @composition = Composition.new(composition_params)
-    if (current_user && @composition.user_id === current_user.id)
-      if @composition.save
-        render :show
-      else
-        render json: ["malformed composition"], status: :unprocessable_entity
-      end
+    if current_user
+      @composition.user_id = current_user.id
     else
       render json: ["forbidden"], status: :forbidden
+    end
+
+    if @composition.id
+      @composition.original = @composition.id
+      @composition.id = nil
+    end
+
+    if @composition.save
+      render json: ["saved!"]
+    else
+      render json: ["something went really wrong"],
+        status: :unprocessable_entity
     end
   end
 
