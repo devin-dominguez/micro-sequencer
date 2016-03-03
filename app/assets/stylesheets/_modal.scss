@@ -9,7 +9,7 @@
 
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .modal-screen {
@@ -23,9 +23,16 @@
 }
 
 .modal-content {
-  margin-top: 120px;
+  padding: 25px;
   background: $bg-color;
   border-radius: 4px;
   z-index: 1000;
 }
 
+.modal-buttons {
+  width: 100%;
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

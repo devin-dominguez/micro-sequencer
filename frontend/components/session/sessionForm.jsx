@@ -96,7 +96,7 @@ var SessionForm = React.createClass({
 
           {this.errors()}
 
-          <div className="session-buttons">
+          <div className="modal-buttons">
             <input className="button" type="submit" value={titleText}/>
             <button className="button" onClick={this.cancelClick}>Cancel</button>
           </div>

@@ -1,6 +1,6 @@
 var React = require('react');
 var History = require('react-router').hashHistory;
-var Modal = require('../util/modal');
+var ConfirmationModal = require('../util/confirmationModal');
 var BrowserStore = require('../../stores/browserStore');
 var BrowserActions = require('../../actions/browserActions');
 var EditorActions = require('../../actions/editorActions');
@@ -11,7 +11,8 @@ var BrowseForm = React.createClass({
   getInitialState: function() {
     return {
       compositions: [],
-      searchString: ""
+      searchString: "",
+      isConfirming: false
     };
   },
 
@@ -45,13 +46,35 @@ var BrowseForm = React.createClass({
 
   loadClick: function(e) {
     e.preventDefault();
+    this.setState({
+      isConfirming: true
+    });
+  },
+
+  confirmLoad: function(e) {
+    e.preventDefault();
     EditorActions.loadComposition(BrowserStore.selectedId());
     History.replace("");
+  },
+
+  cancelLoad: function(e) {
+    e.preventDefault();
+    this.setState({
+      isConfirming: false
+    });
   },
 
   render: function() {
     var titleText = this.props.ownCompositions ? "Load" : "Browse";
     var loadButtonClass = BrowserStore.selectedId() === -1 ? " disabled" : "";
+    var confirmationModal = this.state.isConfirming ?
+          (<ConfirmationModal
+            message="Are you sure you want to load?"
+            submessage="Any unsaved changes will be lost"
+            yesCallback={this.confirmLoad}
+            noCallback={this.cancelLoad}
+          />) :
+            null;
 
     return (
         <div className="browse-form">
@@ -62,12 +85,14 @@ var BrowseForm = React.createClass({
           />
           <CompositionList compositions={this.state.compositions} />
 
-          <div className="browse-buttons">
+          <div className="modal-buttons">
             <button className={"button" + loadButtonClass}
               onClick={this.loadClick}
             >Load</button>
             <button className="button" onClick={this.cancelClick}>Cancel</button>
           </div>
+
+          {confirmationModal}
         </div>
     );
   }
