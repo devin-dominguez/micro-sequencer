@@ -98,4 +98,14 @@ a {
     color: $bg-color;
     background: $fg-color;
   }
+
+  &.disabled {
+    border-color: $fg-color * 0.35;
+    color: $fg-color * 0.35;
+
+    &:hover {
+    background: none;
+    color: $fg-color * 0.35;
+    }
+  }
 }

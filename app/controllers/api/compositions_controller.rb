@@ -1,8 +1,6 @@
 class Api::CompositionsController < ApplicationController
 
   def index
-    puts "PARAMS HERE!"
-    p params
     if current_user && params[:own_compositions] == "true"
       @compositions = current_user.compositions
     else

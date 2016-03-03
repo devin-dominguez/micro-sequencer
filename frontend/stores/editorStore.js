@@ -5,7 +5,6 @@ var EditorConstants = require('../constants/editorConstants');
 
 window.defaultComposition = {
   settings: {
-    title: "untitled",
     tempo: 125,
     hilite: 4,
     tpb: 4
@@ -57,15 +56,18 @@ window.defaultComposition = {
   }
 };
 
-var _composition = window.defaultComposition;
-var _currentSeqIdx = 0;
+var _title = "Untitled Composition";
+var _public = true;
 
-var _currentPatternId = _composition.sequence[_currentSeqIdx];
-var _currentPattern = _composition.patterns[_currentPatternId];
+var _composition;
+var _currentSeqIdx;
 
-var _currentTrackIdx = 0;
-var _currentTrack = _composition.tracks[_currentTrackIdx];
-var _currentPhrase = _currentPattern.phrases[_currentTrackIdx];
+var _currentPatternId;
+var _currentPattern;
+
+var _currentTrackIdx;
+var _currentTrack;
+var _currentPhrase;
 
 var _error = "";
 
@@ -188,6 +190,14 @@ var EditorStore = new Store(Dispatcher);
 
 EditorStore.__onDispatch = function(payload) {
   switch (payload.actionType) {
+    case EditorConstants.LOAD_COMPOSITION:
+      _title = payload.composition.title;
+      _loadComposition(payload.composition.composition);
+      _resetCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
     case EditorConstants.SELECT_TRACK:
       _selectTrack(payload.trackIdx);
       _resetCells();

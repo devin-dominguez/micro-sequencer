@@ -3,6 +3,7 @@ var History = require('react-router').hashHistory;
 var Modal = require('../util/modal');
 var BrowserStore = require('../../stores/browserStore');
 var BrowserActions = require('../../actions/browserActions');
+var EditorActions = require('../../actions/editorActions');
 var CompositionList = require('./compositionList');
 
 var BrowseForm = React.createClass({
@@ -42,8 +43,15 @@ var BrowseForm = React.createClass({
     History.replace("");
   },
 
+  loadClick: function(e) {
+    e.preventDefault();
+    EditorActions.loadComposition(BrowserStore.selectedId());
+    History.replace("");
+  },
+
   render: function() {
     var titleText = this.props.ownCompositions ? "Load" : "Browse";
+    var loadButtonClass = BrowserStore.selectedId() === -1 ? " disabled" : "";
 
     return (
         <div className="browse-form">
@@ -55,7 +63,9 @@ var BrowseForm = React.createClass({
           <CompositionList compositions={this.state.compositions} />
 
           <div className="browse-buttons">
-            <button className="button">Load</button>
+            <button className={"button" + loadButtonClass}
+              onClick={this.loadClick}
+            >Load</button>
             <button className="button" onClick={this.cancelClick}>Cancel</button>
           </div>
         </div>

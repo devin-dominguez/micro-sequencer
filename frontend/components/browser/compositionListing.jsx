@@ -1,10 +1,17 @@
 var React = require('react');
+var History = require('react-router').hashHistory;
 var BrowserActions = require('../../actions/browserActions');
 
 var CompositionListing = React.createClass({
   onClick: function(e) {
     e.preventDefault();
     BrowserActions.selectComposition(this.props.composition.id);
+  },
+
+  onDoubleClick: function(e) {
+    e.preventDefault();
+    EditorActions.loadComposition(BrowserStore.selectedId());
+    History.replace("");
   },
 
   render: function() {

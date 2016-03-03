@@ -2,11 +2,21 @@ var Dispatcher = require('../dispatcher/dispatcher');
 var EditorConstants = require('../constants/editorConstants');
 
 module.exports = {
-  loadPhrase: function(phrase) {
-    Dispatcher.dispatch({
-      actionType: EditorConstants.LOAD_PHRASE,
-      phrase: phrase
-    });
+  loadComposition: function(compositionId) {
+    var ajaxOptions = {
+      url: "api/compositions/" +  compositionId,
+      type: "GET",
+      success: function(composition) {
+        var successAction = {
+          actionType: EditorConstants.LOAD_COMPOSITION,
+          composition: composition
+        };
+      Dispatcher.dispatch(successAction);
+      },
+      //error: failure
+    };
+
+    $.ajax(ajaxOptions);
   },
 
   insertNote: function(noteParams) {
