@@ -35,7 +35,6 @@ var SaveForm = React.createClass({
           isConfirming: true
         });
       } else {
-        // create new composition
         var compositionData = EditorStore.compositionData();
         compositionData.title = this.state.title;
         EditorActions.createComposition(compositionData);

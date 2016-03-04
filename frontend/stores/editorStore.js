@@ -42,10 +42,10 @@ window.defaultComposition = {
     }
   ],
 
-  sequence: [0],
+  sequence: [3],
 
   patterns: {
-    0: {
+    3: {
       length: 64,
       phrases: [
         new Phrase({length: 64}),

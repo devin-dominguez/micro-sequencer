@@ -87,6 +87,9 @@ a {
 }
 
 .button {
+  display: table-cell;
+  text-align: center;
+  vertical-align: center;
   border: 1px solid $fg-color;
   border-radius: 4px;
   color: $fg-color;

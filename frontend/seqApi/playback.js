@@ -11,6 +11,8 @@ var _lookAhead = 0.1;
 var _interval = 0.1;
 
 function Playback() {
+  this.channels = [];
+
   this.playbackQueue = {};
   this.tickDuration = 0.1;
   this.currentTick = 0;
@@ -19,9 +21,6 @@ function Playback() {
   this.isPlaying = false;
 
   this.listener = EditorStore.addListener(this.onChange.bind(this));
-
-  this.currentPattern = 0;
-  this.seqPosition = 0;
 
   this.patternLoop = false;
 }
@@ -35,20 +34,40 @@ Playback.prototype.panic = function() {
 Playback.prototype.onChange = function() {
   if (this.patterns) {
     this.buildPlaybackQueue();
-    EditorStore.composition().tracks.forEach(function(track, idx) {
-      this.synthRunners[idx].track.gain.value = Math.max(0, track.volume);
+    this.channels.forEach(function(channel, idx) {
+      channel.gain.value = this.composition.tracks[idx].volume;
     }, this);
   }
 };
 
+Playback.prototype.disconnectChannels = function() {
+  this.channels.forEach(function(channel) {
+    channel.disconnect();
+  });
+  this.channels = [];
+};
+
 Playback.prototype.loadComposition = function() {
-  var composition = EditorStore.composition();
-  this.sequence = composition.sequence;
-  this.patterns = composition.patterns;
-  this.settings = composition.settings;
-  this.synthRunners = composition.tracks.map(function(track) {
-    return new SynthRunner(track, audio);
+  this.composition = EditorStore.composition();
+  this.sequence = this.composition.sequence;
+  this.patterns = this.composition.patterns;
+  this.settings = this.composition.settings;
+
+  this.populateTracks();
+};
+
+Playback.prototype.populateTracks = function() {
+  this.disconnectChannels();
+
+  this.synthRunners = this.composition.tracks.map(function(track, idx) {
+    this.channels[idx] = audio.createGain();
+    this.channels[idx].connect(audio.destination);
+    this.channels[idx].gain.value = track.volume;
+    return new SynthRunner(track, audio, this.channels[idx]);
   }, this);
+
+  this.seqPosition = 0;
+  this.currentPattern = this.sequence[0];
 };
 
 Playback.prototype.play = function() {

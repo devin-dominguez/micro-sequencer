@@ -2,7 +2,6 @@
 
 .settings {
   flex-direction: column;
-  text-align: center;
 }
 
 .transport {
@@ -42,11 +41,38 @@
   overflow-y: scroll;
 }
 
+.track-list-header {
+  display: flex;
+  justify-content: space-between;
+
+  .button {
+    display: table-cell;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+
 .track-listing {
   text-align: left;
   border: 1px dotted $grid-color;
   margin: 10px 0;
-  padding: 2px;
+  padding: 8px;
+}
+
+.track-header {
+  display: flex;
+  justify-content: space-between;
+
+  .button {
+    width: 16px;
+    height: 16px;
+    &:hover {
+      background-color: $error-color;
+      color: $fg-color;
+    }
+  }
 }
 
 .track-listing-controls {
@@ -55,6 +81,8 @@
 
   input[type=range] {
     flex: 1;
+    margin: 5px 0;
+
   }
 }
 

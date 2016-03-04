@@ -50,16 +50,12 @@ var TrackListing = React.createClass({
       <div className={"track-listing " + className}
         onDoubleClick={this.onDoubleClick}
       >
-        <div className="track-name">
+        <div className="track-header">
           <h4>{"Track " + (this.props.trackIdx + 1)}</h4>
+          <div className="button">x</div>
         </div>
 
         <div className="track-listing-controls">
-          <input className="toggle" type="checkbox"
-            value="mute"
-            checked={!this.state.muted}
-            onChange={this.synthParamChange.bind(this, "muted")}
-          />
 
           <input id="volume"
             type="range"

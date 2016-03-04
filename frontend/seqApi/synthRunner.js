@@ -11,13 +11,11 @@ var mtof = [];
   }
 })(440);
 
-function SynthRunner(synth, audio) {
+function SynthRunner(synth, audio, channel) {
   this.synth = synth;
   this.audio = audio;
 
-  this.track = this.audio.createGain();
-  this.track.gain.value = this.synth.volume;
-  this.track.connect(this.audio.destination);
+  this.channel = channel;
 
   this.voices = {};
 }
@@ -30,7 +28,7 @@ SynthRunner.prototype.noteOn = function(pitch, time) {
   time = time || this.audio.currentTime;
 
   var freq = mtof[pitch];
-  var voice = new Voice(this.track, this.audio, this.voiceDone.bind(this));
+  var voice = new Voice(this.channel, this.audio, this.voiceDone.bind(this));
 
   voice._noteOn(this.synth, freq, time);
 
@@ -59,6 +57,6 @@ SynthRunner.prototype.panic = function() {
 
 SynthRunner.prototype.voiceDone = function(voiceIdx) {
   delete this.voices[voiceIdx];
-}
+};
 
 module.exports = SynthRunner;
