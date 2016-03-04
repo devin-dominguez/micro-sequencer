@@ -44,7 +44,15 @@ var SaveForm = React.createClass({
     }
   },
 
-  cancelSave: function(e) {
+  confirmOverwrite: function(e) {
+    e.preventDefault();
+    var compositionData = EditorStore.compositionData();
+    compositionData.title = this.state.title;
+    EditorActions.updateComposition(compositionData, EditorStore.id());
+    History.replace("");
+  },
+
+  cancelOverwrite: function(e) {
     e.preventDefault();
     this.setState({
       isConfirming: false
@@ -57,8 +65,8 @@ var SaveForm = React.createClass({
           (<ConfirmationModal
             message={this.state.title + " already exists."}
             submessage="Would you like to overwrite it?"
-            yesCallback={this.confirmSave}
-            noCallback={this.cancelSave}
+            yesCallback={this.confirmOverwrite}
+            noCallback={this.cancelOverwrite}
           />) :
             null;
 

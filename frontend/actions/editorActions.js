@@ -1,5 +1,6 @@
 var Dispatcher = require('../dispatcher/dispatcher');
 var EditorConstants = require('../constants/editorConstants');
+var BrowserActions = require('./browserActions');
 
 module.exports = {
   loadComposition: function(compositionId) {
@@ -29,7 +30,31 @@ module.exports = {
           composition: composition
         };
       Dispatcher.dispatch(successAction);
-      }
+      BrowserActions.receiveCompositions(true);
+    }
+    };
+
+    $.ajax(ajaxOptions);
+  },
+
+  updateComposition: function (compositionData, compositionId) {
+    var that = this;
+    var ajaxOptions = {
+      url: "api/compositions/" + compositionId,
+      type: "PATCH",
+      data: {composition: compositionData},
+      success: function(composition) {
+        if (composition.clone) {
+          that.createComposition(compositionData);
+        } else {
+          var successAction = {
+            actionType: EditorConstants.UPDATE_COMPOSITION,
+            composition: composition
+          };
+        Dispatcher.dispatch(successAction);
+        BrowserActions.receiveCompositions(true);
+        }
+      },
     };
 
     $.ajax(ajaxOptions);

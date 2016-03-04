@@ -1,6 +1,7 @@
 @import 'variables';
 .piano-roll {
   width: 1px;
+  min-width: 1px;
   flex: 1;
 }
 
@@ -10,6 +11,7 @@
   border-left: 1px dashed $grid-color;
   overflow: scroll;
   padding: 5px;
+  max-height: 84vh;
 }
 
 .keyboard {
@@ -17,6 +19,7 @@
   margin-right: 4px;
   overflow: hidden;
   transition: height 100ms;
+  max-height: 84vh;
 }
 
 #keyboard-canvas {

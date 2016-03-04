@@ -59,6 +59,8 @@ a {
 
 .app {
   min-height: 100vh;
+  max-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -75,8 +77,8 @@ a {
 .editor {
   flex: 1;
   display: flex;
-  height: 1px;
   padding: 10px;
+  height: 1px;
 }
 
 .panel {

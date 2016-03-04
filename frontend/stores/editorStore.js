@@ -58,6 +58,8 @@ window.defaultComposition = {
 
 var _title = "Untitled";
 var _public = true;
+var _id = -1;
+var _user_id;
 
 var _composition;
 var _currentSeqIdx;
@@ -191,7 +193,10 @@ var EditorStore = new Store(Dispatcher);
 EditorStore.__onDispatch = function(payload) {
   switch (payload.actionType) {
     case EditorConstants.CREATE_COMPOSITION:
+    case EditorConstants.UPDATE_COMPOSITION:
     case EditorConstants.LOAD_COMPOSITION:
+      _id = payload.composition.id;
+      _user_id = payload.composition.user_id
       _title = payload.composition.title;
       _loadComposition(payload.composition.composition);
       _resetCells();
@@ -292,6 +297,7 @@ EditorStore.__onDispatch = function(payload) {
 
 EditorStore.compositionData = function() {
   return {
+    user_id: _user_id,
     title: _title,
     "public": _public,
     composition: JSON.stringify(_composition)
@@ -322,6 +328,10 @@ EditorStore.destinationCells = function() {
   return Object.keys(_destinationCells).map(function(key) {
     return _destinationCells[key];
   });
+};
+
+EditorStore.id = function() {
+  return _id;
 };
 
 EditorStore.selectedKey = function() {
@@ -363,6 +373,3 @@ EditorStore.tempo = function() {
 };
 
 module.exports = EditorStore;
-//var _currentTrack = _composition.tracks[_currentTrackIdx];
-//var _currentPattern = _composition.patterns[0];
-//var _currentPhrase = _currentPattern.phrases[_currentTrackIdx];
