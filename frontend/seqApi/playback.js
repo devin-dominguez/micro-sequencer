@@ -33,11 +33,17 @@ Playback.prototype.panic = function() {
 
 Playback.prototype.onChange = function() {
   if (this.patterns) {
+
+    if (this.channels.length !== this.composition.tracks.length) {
+      this.populateTracks();
+    }
+
     this.buildPlaybackQueue();
     this.channels.forEach(function(channel, idx) {
       channel.gain.value = this.composition.tracks[idx].volume;
     }, this);
   }
+
 };
 
 Playback.prototype.disconnectChannels = function() {

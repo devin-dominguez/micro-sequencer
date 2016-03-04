@@ -1,6 +1,7 @@
 var React = require('react');
 var EditorStore = require('../../stores/editorStore');
 var EditorActions = require('../../actions/editorActions');
+var ConfirmationModal = require('../util/confirmationModal');
 
 var TrackListing = React.createClass({
   getInitialState: function() {
@@ -9,7 +10,8 @@ var TrackListing = React.createClass({
     return {
       isCurrentTrack: isCurrentTrack,
       muted: track.muted,
-      volume: track.volume
+      volume: track.volume,
+      isConfirming: false
     };
   },
 
@@ -24,11 +26,13 @@ var TrackListing = React.createClass({
   onChange: function() {
     var isCurrentTrack = this.props.trackIdx === EditorStore.currentTrackIdx();
     var track = EditorStore.track(this.props.trackIdx);
-    this.setState({
-      isCurrentTrack: isCurrentTrack,
-      muted: track.muted,
-      volume: track.volume
-    });
+      if (track) {
+      this.setState({
+        isCurrentTrack: isCurrentTrack,
+        muted: track.muted,
+        volume: track.volume
+      });
+    }
   },
 
   synthParamChange: function(type, e) {
@@ -43,8 +47,42 @@ var TrackListing = React.createClass({
     EditorActions.selectTrack(this.props.trackIdx);
   },
 
+  onClickRemoveTrack: function(e) {
+    e.preventDefault();
+    this.setState({
+      isConfirming: true
+    });
+  },
+
+  confirmRemoveTrack: function(e) {
+    e.preventDefault();
+    if (EditorStore.composition().tracks.length === 1) {
+      EditorActions.addTrack();
+    }
+    EditorActions.removeTrack(this.props.trackIdx);
+    this.setState({
+      isConfirming: false
+    });
+  },
+
+  cancelRemoveTrack: function(e) {
+    e.preventDefault();
+    this.setState({
+      isConfirming: false
+    });
+  },
+
   render: function() {
     var className = this.state.isCurrentTrack ? "current-track" : "";
+    var confirmationModal = this.state.isConfirming ?
+          (<ConfirmationModal
+            message={"Are you sure you wish to remove Track " +
+                (this.props.trackIdx + 1) + "?"}
+            submessage="This will be permanent."
+            yesCallback={this.confirmRemoveTrack}
+            noCallback={this.cancelRemoveTrack}
+          />) :
+            null;
 
     return (
       <div className={"track-listing " + className}
@@ -52,7 +90,9 @@ var TrackListing = React.createClass({
       >
         <div className="track-header">
           <h4>{"Track " + (this.props.trackIdx + 1)}</h4>
-          <div className="button">x</div>
+          <div className="button"
+            onClick={this.onClickRemoveTrack}
+          >x</div>
         </div>
 
         <div className="track-listing-controls">
@@ -66,6 +106,7 @@ var TrackListing = React.createClass({
             onChange={this.synthParamChange.bind(this, "volume")}
           />
         </div>
+        {confirmationModal}
 
       </div>
     );

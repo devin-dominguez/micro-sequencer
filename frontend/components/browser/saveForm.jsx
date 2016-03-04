@@ -3,6 +3,7 @@ var History = require('react-router').hashHistory;
 var EditorStore = require('../../stores/editorStore');
 var EditorActions = require('../../actions/editorActions');
 var BrowserStore = require('../../stores/browserStore');
+var SessionStore = require('../../stores/sessionStore');
 var ConfirmationModal = require('../util/confirmationModal');
 
 var SaveForm = React.createClass({
@@ -47,7 +48,8 @@ var SaveForm = React.createClass({
     e.preventDefault();
     var compositionData = EditorStore.compositionData();
     compositionData.title = this.state.title;
-    EditorActions.updateComposition(compositionData, EditorStore.id());
+    EditorActions.updateComposition(compositionData,
+        SessionStore.currentUser().id);
     History.replace("");
   },
 

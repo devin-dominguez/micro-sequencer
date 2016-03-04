@@ -1,7 +1,8 @@
 var Dispatcher = require('../dispatcher/dispatcher');
 var Store = require('flux/utils').Store;
-var Phrase = require('../seqApi/phrase');
 var EditorConstants = require('../constants/editorConstants');
+
+var Composition = require('../seqApi/composition');
 
 window.defaultComposition = {
   settings: {
@@ -48,9 +49,9 @@ window.defaultComposition = {
     3: {
       length: 64,
       phrases: [
-        new Phrase({length: 64}),
-        new Phrase({length: 64}),
-        new Phrase({length: 64})
+        {length: 64},
+        {length: 64},
+        {length: 64}
       ]
     }
   }
@@ -59,7 +60,7 @@ window.defaultComposition = {
 var _title = "Untitled";
 var _public = true;
 var _id = -1;
-var _user_id;
+var _user_id = null;
 
 var _composition;
 var _currentSeqIdx;
@@ -80,24 +81,13 @@ var _destinationCells = {};
 var _selectedNote = null;
 var _offset = 0;
 
-_loadComposition(JSON.stringify(window.defaultComposition));
-
 var _selectedKey = null;
 
-function _parseComposition(compoStr) {
-  var composition =  JSON.parse(compoStr);
-  Object.keys(composition.patterns).forEach(function(patternId) {
-    composition.patterns[patternId].phrases =
-      composition.patterns[patternId].phrases.map(function(phrase) {
-        return new Phrase(phrase);
-      });
-  });
+_loadComposition(JSON.stringify(window.defaultComposition));
 
-  return composition;
-}
 
 function _loadComposition(compoString) {
-  _composition = _parseComposition(compoString);
+  _composition = new Composition(JSON.parse(compoString));
   _currentSeqIdx = 0;
 
   _currentPatternId = _composition.sequence[_currentSeqIdx];
@@ -196,7 +186,7 @@ EditorStore.__onDispatch = function(payload) {
     case EditorConstants.UPDATE_COMPOSITION:
     case EditorConstants.LOAD_COMPOSITION:
       _id = payload.composition.id;
-      _user_id = payload.composition.user_id
+      _user_id = payload.composition.user_id;
       _title = payload.composition.title;
       _loadComposition(payload.composition.composition);
       _resetCells();
@@ -206,6 +196,27 @@ EditorStore.__onDispatch = function(payload) {
 
     case EditorConstants.SELECT_TRACK:
       _selectTrack(payload.trackIdx);
+      _resetCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.ADD_TRACK:
+      _composition.addTrack();
+      _resetCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.REMOVE_TRACK:
+      // TODO in track component that issues removeTrack action, check if the
+      // track list has more than one track. If not then issue a addTrack action
+      // before the removeTrack one so that the plyback will re-render its
+      // channels and synths
+
+      _composition.removeTrack(payload.trackIdx);
+       _selectTrack(Math.min(_composition.tracks.length - 1,
+             Math.max(0, payload.trackIdx)));
       _resetCells();
       _populateNoteCells();
       this.__emitChange();

@@ -23,6 +23,11 @@ var TrackList = React.createClass({
     });
   },
 
+  onClickAddTrack: function(e) {
+    e.preventDefault();
+    EditorActions.addTrack();
+  },
+
   render: function() {
     var tracks = this.state.tracks.map(function(track, idx) {
       return (
@@ -36,7 +41,9 @@ var TrackList = React.createClass({
       <div className="track-list">
         <div className="track-list-header">
           <h2>Tracks</h2>
-          <button className="button">+</button>
+          <button className="button"
+            onClick={this.onClickAddTrack}
+          >+</button>
         </div>
         {tracks}
       </div>

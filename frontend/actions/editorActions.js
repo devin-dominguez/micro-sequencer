@@ -37,10 +37,10 @@ module.exports = {
     $.ajax(ajaxOptions);
   },
 
-  updateComposition: function (compositionData, compositionId) {
+  updateComposition: function (compositionData, userId) {
     var that = this;
     var ajaxOptions = {
-      url: "api/compositions/" + compositionId,
+      url: "api/compositions/" + userId + "/save",
       type: "PATCH",
       data: {composition: compositionData},
       success: function(composition) {
@@ -58,6 +58,19 @@ module.exports = {
     };
 
     $.ajax(ajaxOptions);
+  },
+
+  addTrack: function() {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.ADD_TRACK
+    });
+  },
+
+  removeTrack: function(trackIdx) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.REMOVE_TRACK,
+      trackIdx: trackIdx
+    });
   },
 
   insertNote: function(noteParams) {

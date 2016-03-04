@@ -48,9 +48,16 @@ class Api::CompositionsController < ApplicationController
   end
 
   def update
-    @composition = Composition.find(params[:id])
-    unless current_user
+    user_id = params[:user_id].to_i
+    title = params[:composition][:title]
+    if user_id != current_user.id
       render json: ["forbidden"], status: :forbidden
+      return
+    end
+    @composition = Composition.find_by(user_id: user_id, title: title)
+
+    unless @composition
+      render json: ["not found"], status: :note_found
       return
     end
 

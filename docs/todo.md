@@ -1,0 +1,7 @@
+- cleanup synthRunners on composition reload
+- playback should respect pattern sequence
+- add/remove tracks
+- track muting
+- resize patterns
+- settings modal
+- help modal
