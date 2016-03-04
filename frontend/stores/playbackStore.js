@@ -46,7 +46,6 @@ PlaybackStore.__onDispatch =  function(payload) {
     case EditorConstants.LOAD_COMPOSITION:
     case EditorConstants.CREATE_COMPOSITION:
     case EditorConstants.UPDATE_COMPOSITION:
-      console.log("playback");
       _playback.loadComposition();
       break;
 
