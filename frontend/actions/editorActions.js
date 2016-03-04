@@ -66,6 +66,14 @@ module.exports = {
     });
   },
 
+  resizePattern: function(patternId, newSize) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.RESIZE_PATTERN,
+      patternId: patternId,
+      newSize: newSize
+    });
+  },
+
   removeTrack: function(trackIdx) {
     Dispatcher.dispatch({
       actionType: EditorConstants.REMOVE_TRACK,

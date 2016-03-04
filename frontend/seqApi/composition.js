@@ -19,14 +19,14 @@ function Composition(params) {
 Composition.prototype.removeTrack = function(trackIdx) {
   this.tracks.splice(trackIdx, 1);
   Object.keys(this.patterns).forEach(function(patternId) {
-    this.patterns[patternId]._removeTrack(trackIdx);
+    this.patterns[patternId].removeTrack(trackIdx);
   }, this);
 };
 
 Composition.prototype.addTrack = function() {
   this.tracks.push(new Track());
   Object.keys(this.patterns).forEach(function(patternId) {
-    this.patterns[patternId]._addTrack();
+    this.patterns[patternId].addTrack();
   }, this);
 };
 

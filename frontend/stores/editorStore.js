@@ -194,6 +194,14 @@ EditorStore.__onDispatch = function(payload) {
       this.__emitChange();
       break;
 
+    case EditorConstants.RESIZE_PATTERN:
+      var pattern = _composition.patterns[payload.patternId];
+      pattern.resize(Math.min(1024, Math.max(1, payload.newSize)));
+      _resetCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
     case EditorConstants.SELECT_TRACK:
       _selectTrack(payload.trackIdx);
       _resetCells();
@@ -209,11 +217,6 @@ EditorStore.__onDispatch = function(payload) {
       break;
 
     case EditorConstants.REMOVE_TRACK:
-      // TODO in track component that issues removeTrack action, check if the
-      // track list has more than one track. If not then issue a addTrack action
-      // before the removeTrack one so that the plyback will re-render its
-      // channels and synths
-
       _composition.removeTrack(payload.trackIdx);
        _selectTrack(Math.min(_composition.tracks.length - 1,
              Math.max(0, payload.trackIdx)));

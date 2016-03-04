@@ -122,6 +122,11 @@ Phrase.prototype.copyNoteTo = function(noteParams, pitch, position) {
   return newNote;
 };
 
+Phrase.prototype.resize = function(newSize) {
+  this.length = newSize;
+  this._removeInvalidNotes();
+};
+
 /////////////
 // METHODS //
 /////////////
@@ -180,6 +185,17 @@ Phrase.prototype._sortNotes = function() {
       return noteA.position - noteB.position;
     }
   });
+};
+
+Phrase.prototype._removeInvalidNotes = function() {
+  this.notes = this.notes.filter(function(note) {
+    try {
+      this._validateNote(note);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }, this);
 };
 
 

@@ -7,12 +7,19 @@ function Pattern(params) {
   });
 }
 
-Pattern.prototype._removeTrack = function(trackIdx) {
+Pattern.prototype.removeTrack = function(trackIdx) {
   this.phrases.splice(trackIdx, 1);
 };
 
-Pattern.prototype._addTrack = function() {
+Pattern.prototype.addTrack = function() {
   this.phrases.push(new Phrase({length: this.length}));
+};
+
+Pattern.prototype.resize = function(newSize) {
+  this.length = newSize;
+  this.phrases.forEach(function(phrase) {
+    phrase.resize(newSize);
+  });
 };
 
 module.exports = Pattern;
