@@ -62,9 +62,6 @@ var _offset = 0;
 
 var _selectedKey = null;
 
-//_loadComposition(JSON.stringify(defaultComposition));
-
-
 function _loadComposition(compoString) {
   _composition = new Composition(JSON.parse(compoString));
   _currentSeqIdx = 0;
@@ -92,7 +89,8 @@ function _resetCells() {
 function _populateNoteCells() {
   _noteCells = {};
 
-  _currentPhrase.notes.forEach(function(note) {
+  Object.keys(_currentPhrase.notes).forEach(function(noteKey) {
+    var note = _currentPhrase.notes[noteKey];
     for (var tick = 0; tick < note.duration; tick++) {
       var key = _cellKey(note.pitch, note.position) + tick;
       _noteCells[key] = {
@@ -229,7 +227,7 @@ EditorStore.__onDispatch = function(payload) {
     case EditorConstants.REMOVE_NOTE:
       _error = "";
       try {
-        _currentPhrase.removeNote(payload.noteParams);
+        _currentPhrase.removeNote(payload.pitch, payload.position);
       } catch (error) {
         _error = error.message;
       }
@@ -241,7 +239,9 @@ EditorStore.__onDispatch = function(payload) {
     case EditorConstants.MOVE_NOTE_TO:
       _error = "";
       try {
-        _currentPhrase.moveNoteTo(_selectedNote, payload.pitch,
+        _currentPhrase.moveNoteTo(
+            _selectedNote.pitch, _selectedNote.position,
+            payload.pitch,
             Math.min(_currentPhrase.length - _selectedNote.duration,
               Math.max(0, payload.position - _offset)));
       } catch (error) {
@@ -255,7 +255,8 @@ EditorStore.__onDispatch = function(payload) {
     case EditorConstants.REISZE_NOTE_TO:
       _error = "";
       try {
-        _currentPhrase.resizeNoteTo(_selectedNote,
+        _currentPhrase.resizeNoteTo(_selectedNote.pitch,
+            _selectedNote.position,
             Math.max(1, payload.endPosition - _selectedNote.position + 1));
       } catch (error) {
         _error = error.message;

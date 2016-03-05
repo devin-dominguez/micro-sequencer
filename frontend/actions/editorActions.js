@@ -30,23 +30,15 @@ module.exports = {
     });
   },
 
-  removeNote: function(noteParams) {
+  removeNote: function(pitch, position) {
     Dispatcher.dispatch({
       actionType: EditorConstants.REMOVE_NOTE,
-      noteParams: noteParams
-    });
-  },
-
-  moveNoteTo: function(noteParams, pitch, position) {
-    Dispatcher.dispatch({
-      actionType: EditorConstants.MOVE_NOTE_TO,
-      noteParams: noteParams,
       pitch: pitch,
       position: position
     });
   },
 
-  moveSelectedNoteTo: function(pitch, position) {
+  moveNoteTo: function(pitch, position) {
     Dispatcher.dispatch({
       actionType: EditorConstants.MOVE_NOTE_TO,
       pitch: pitch,

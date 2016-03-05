@@ -174,7 +174,8 @@ var PianoRoll = React.createClass({
   onDoubleClick: function(e) {
     e.preventDefault();
     if (this.currentCell.note) {
-      EditorActions.removeNote(this.currentCell.note);
+      EditorActions.removeNote(this.currentCell.note.pitch,
+          this.currentCell.note.position);
     } else {
       EditorActions.insertNote({
         pitch: this.currentPitch,
@@ -205,7 +206,7 @@ var PianoRoll = React.createClass({
 
   onMouseUp: function(e) {
     if (this.moveDrag) {
-      EditorActions.moveSelectedNoteTo(this.currentPitch,
+      EditorActions.moveNoteTo(this.currentPitch,
           this.currentPosition);
     }
     if (this.resizeDrag) {

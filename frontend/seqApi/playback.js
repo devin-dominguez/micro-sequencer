@@ -181,7 +181,8 @@ Playback.prototype.buildPlaybackQueue = function() {
 
   this.patterns[this.currentPattern].phrases.forEach(function(phrase, trackIdx) {
     this.playbackQueues[trackIdx] = {};
-    phrase.notes.forEach(function(note) {
+    Object.keys(phrase.notes).forEach(function(noteKey) {
+      var note = phrase.notes[noteKey];
       if (!this.playbackQueues[trackIdx][note.position]) {
         this.playbackQueues[trackIdx][note.position] = [note];
       } else {

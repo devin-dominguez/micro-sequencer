@@ -6,16 +6,22 @@ var Note = require('./note.js');
 
 function Phrase(params) {
   this.length = params.length;
-  this.notes = params.notes || [];
 
-  this.notes = this.notes.map(function(note) {
-    return new Note(note);
-  });
+  this.notes = params.notes || {};
+  Object.keys(this.notes).forEach(function(noteKey) {
+    var note = params.notes[noteKey];
+    this.notes[noteKey] =  new Note(note);
+  }, this);
 }
 
 ///////////////
 // INTERFACE //
 ///////////////
+
+Phrase.prototype.resize = function(newSize) {
+  this.length = newSize;
+  this._removeInvalidNotes();
+};
 
 Phrase.prototype.insertNote = function(noteParams) {
   var newNote = new Note(noteParams);
@@ -26,100 +32,94 @@ Phrase.prototype.insertNote = function(noteParams) {
   return newNote;
 };
 
-Phrase.prototype.removeNote = function(noteParams) {
-  var note = new Note(noteParams);
-  var idx = this._findNote(note);
-
-  this.notes.splice(idx, 1);
+Phrase.prototype.removeNote = function(pitch, position) {
+  var key = pitch * this.length + position;
+  var note = this.notes[key];
+  delete this.notes[key];
 
   return note;
 };
 
-Phrase.prototype.transposeNoteTo = function(noteParams, pitch) {
-  var targetNote = new Note(noteParams);
-  var newNote = new Note(noteParams);
-  newNote.pitch = pitch;
+Phrase.prototype.transposeNoteTo = function(pitch, position, newPitch) {
+  var originalNote = this.notes[pitch * this.length + position];
+  var newNote = new Note(originalNote);
+  newNote.pitch = newPitch;
 
-  this._changeNote(targetNote, newNote);
+  this._changeNote(pitch, position, newNote);
 
   return newNote;
 };
 
-Phrase.prototype.transposeNoteBy = function(noteParams, offset) {
-  var targetNote = new Note(noteParams);
-  var newNote = new Note(noteParams);
+Phrase.prototype.transposeNoteBy = function(pitch, position, offset) {
+  var originalNote = this.notes[pitch * this.length + position];
+  var newNote = new Note(originalNote);
   newNote.pitch += offset;
 
-  this._changeNote(targetNote, newNote);
+  this._changeNote(pitch, position, newNote);
 
   return newNote;
 };
 
-Phrase.prototype.translateNoteTo = function(noteParams, position) {
-  var targetNote = new Note(noteParams);
-  var newNote = new Note(noteParams);
-  newNote.position = position;
+Phrase.prototype.translateNoteTo = function(pitch, position, newPosition) {
+  var originalNote = this.notes[pitch * this.length + position];
+  var newNote = new Note(originalNote);
+  newNote.position = newPosition;
 
-  this._changeNote(targetNote, newNote);
+  this._changeNote(pitch, position, newNote);
 
   return newNote;
 };
 
-Phrase.prototype.translateNoteBy = function(noteParams, offset) {
-  var targetNote = new Note(noteParams);
-  var newNote = new Note(noteParams);
+Phrase.prototype.translateNoteBy = function(pitch, position, offset) {
+  var originalNote = this.notes[pitch * this.length + position];
+  var newNote = new Note(originalNote);
   newNote.position += offset;
 
-  this._changeNote(targetNote, newNote);
+  this._changeNote(pitch, position, newNote);
 
   return newNote;
 };
 
-Phrase.prototype.resizeNoteTo = function(noteParams, duration) {
-  var targetNote = new Note(noteParams);
-  var newNote = new Note(noteParams);
-  newNote.duration = duration;
+Phrase.prototype.resizeNoteTo = function(pitch, position, newDuration) {
+  var originalNote = this.notes[pitch * this.length + position];
+  var newNote = new Note(originalNote);
+  newNote.duration = newDuration;
 
-  this._changeNote(targetNote, newNote);
+  this._changeNote(pitch, position, newNote);
 
   return newNote;
 };
 
-Phrase.prototype.resizeNoteBy = function(noteParams, offset) {
-  var targetNote = new Note(noteParams);
-  var newNote = new Note(noteParams);
+Phrase.prototype.resizeNoteBy = function(pitch, position, offset) {
+  var originalNote = this.notes[pitch * this.length + position];
+  var newNote = new Note(originalNote);
   newNote.duration += offset;
 
-  this._changeNote(targetNote, newNote);
+  this._changeNote(pitch, position, newNote);
 
   return newNote;
 };
 
-Phrase.prototype.moveNoteTo = function(noteParams, pitch, position) {
-  var targetNote = new Note(noteParams);
-  var newNote = new Note(noteParams);
-  newNote.pitch = pitch;
-  newNote.position = position;
+Phrase.prototype.moveNoteTo = function(pitch, position, newPitch, newPosition) {
+  var originalNote = this.notes[pitch * this.length + position];
+  var newNote = new Note(originalNote);
+  newNote.pitch = newPitch;
+  newNote.position = newPosition;
 
-  this._changeNote(targetNote, newNote);
+  this._changeNote(pitch, position, newNote);
 
   return newNote;
 };
 
-Phrase.prototype.copyNoteTo = function(noteParams, pitch, position) {
-  var targetNote = new Note(noteParams);
-  var newNote = new Note(noteParams);
-  newNote.pitch = pitch;
-  newNote.position = position;
+Phrase.prototype.copyNoteTo = function(pitch, position, newPitch, newPosition) {
+  var originalNote = this.notes[pitch * this.length + position];
+  var newNote = new Note(originalNote);
+  newNote.pitch = newPitch;
+  newNote.position = newPosition;
 
   this.insertNote(newNote);
 
   return newNote;
-};
-
-Phrase.prototype.resize = function(newSize) {
-  this.length = newSize;
-  this._removeInvalidNotes();
 };
 
 /////////////
@@ -127,12 +127,12 @@ Phrase.prototype.resize = function(newSize) {
 /////////////
 
 Phrase.prototype._addNote = function(note) {
-  this.notes.push(new Note(note));
-  this._sortNotes();
+  var key = note.pitch * this.length + note.position;
+  this.notes[key] = new Note(note);
 };
 
-Phrase.prototype._changeNote = function(originalNote, newNote) {
-  this.removeNote(originalNote);
+Phrase.prototype._changeNote = function(pitch, position, newNote) {
+  var originalNote = this.removeNote(pitch, position);
 
   try {
     this.insertNote(newNote);
@@ -142,16 +142,6 @@ Phrase.prototype._changeNote = function(originalNote, newNote) {
   }
 };
 
-Phrase.prototype._findNote = function(targetNote) {
-  for (var i = 0, l = this.notes.length; i < l; i++) {
-    var note = this.notes[i];
-    if (targetNote.eq(note)) {
-      return i;
-    }
-  }
-
-  throw new NoteNotFoundException(targetNote);
-};
 
 Phrase.prototype._validateNote = function(testNote) {
   this._checkBoundary(testNote);
@@ -159,11 +149,12 @@ Phrase.prototype._validateNote = function(testNote) {
 };
 
 Phrase.prototype._checkOverlap = function(testNote) {
-  this.notes.forEach(function(note) {
+  Object.keys(this.notes).forEach(function(noteKey) {
+    var note = this.notes[noteKey];
     if (testNote.isOverlapping(note) ) {
       throw new NoteOverlapException(testNote, note);
     }
-  });
+  }, this);
 };
 
 Phrase.prototype._checkBoundary = function(testNote) {
@@ -172,23 +163,13 @@ Phrase.prototype._checkBoundary = function(testNote) {
   }
 };
 
-Phrase.prototype._sortNotes = function() {
-  this.notes.sort(function(noteA, noteB) {
-    if (noteA.position === noteB.position) {
-      return noteA.pitch - noteB.pitch;
-    } else {
-      return noteA.position - noteB.position;
-    }
-  });
-};
-
 Phrase.prototype._removeInvalidNotes = function() {
-  this.notes = this.notes.filter(function(note) {
+  Object.keys(this.notes).forEach(function(noteKey) {
+    var note = this.notes[noteKey];
     try {
       this._validateNote(note);
-      return true;
     } catch (e) {
-      return false;
+      delete this.notes[noteKey];
     }
   }, this);
 };
