@@ -8,14 +8,10 @@ function Phrase(params) {
   this.length = params.length;
   this.notes = params.notes || [];
 
-  this._setupChildren();
-}
-
-Phrase.prototype._setupChildren = function() {
   this.notes = this.notes.map(function(note) {
     return new Note(note);
   });
-};
+}
 
 ///////////////
 // INTERFACE //
