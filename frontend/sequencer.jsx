@@ -14,6 +14,10 @@ var SessionActions = require('./actions/sessionActions');
 var EditorActions = require('./actions/editorActions');
 var PlaybackActions = require('./actions/playbackActions');
 var BrowserActions = require('./actions/browserActions');
+var CompositionActions = require('./actions/compositionActions');
+
+
+var Playback = require('./seqApi/playback');
 
 var routes = (
   <Route component={App} path="/">
@@ -24,8 +28,11 @@ var routes = (
   </Route>
 );
 
-$(function() {
+  var playback = new Playback();
   SessionActions.recieveCurrentUser();
+  CompositionActions.newComposition();
+
+$(function() {
   var contentElement = $("#content")[0];
 
   ReactDOM.render(<Router history={History}>{routes}</Router>, contentElement);

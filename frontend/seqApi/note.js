@@ -1,5 +1,4 @@
 var Config = require('./config.js');
-var Util = require('./util.js');
 
 //////////////
 // CREATION //
@@ -19,20 +18,20 @@ function Note(options) {
 // METHODS //
 /////////////
 
-Note.prototype._isOverlapping = function(otherNote) {
+Note.prototype.isOverlapping = function(otherNote) {
   if (this.pitch === otherNote.pitch) {
-    return this.position <= otherNote._end() &&
-      otherNote.position <= this._end();
+    return this.position <= otherNote.end() &&
+      otherNote.position <= this.end();
   } else {
     return false;
   }
 };
 
-Note.prototype._end = function() {
+Note.prototype.end = function() {
   return this.position + this.duration - 1;
 };
 
-Note.prototype._eq = function(otherNote) {
+Note.prototype.eq = function(otherNote) {
   return (
     this.pitch === otherNote.pitch &&
     this.position === otherNote.position &&
@@ -49,7 +48,7 @@ Note.prototype._checkDuration = function(duration) {
 };
 
 Note.prototype._checkPitch = function(pitch) {
-  if (Util.isBetween(pitch, Config.MIN_PITCH, Config.MAX_PITCH)) {
+  if ( pitch >= Config.MIN_PITCH && pitch <= Config.MAX_PITCH) {
     return 0 | pitch;
   } else {
     throw new PitchOutOfRangeException(pitch);

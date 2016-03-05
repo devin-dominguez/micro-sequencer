@@ -33,9 +33,10 @@ module.exports = {
     });
   },
 
-  tick: function() {
+  tick: function(tick) {
     Dispatcher.dispatch({
       actionType: PlaybackConstants.TICK,
+      tick: tick
     });
   }
 

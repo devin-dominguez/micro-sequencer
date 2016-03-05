@@ -3,7 +3,7 @@ var History = require('react-router').hashHistory;
 var SessionButton = require('./sessionButton');
 var SessionStore = require('../../stores/sessionStore');
 var ConfirmationModal = require('../util/confirmationModal');
-var EditorActions = require('../../actions/editorActions');
+var CompositionActions = require('../../actions/compositionActions');
 
 var NavBar = React.createClass({
   getInitialState: function() {
@@ -54,7 +54,7 @@ var NavBar = React.createClass({
     this.setState({
       isConfirming: false
     });
-    EditorActions.newComposition();
+    CompositionActions.newComposition();
   },
 
   cancelNew: function(e) {

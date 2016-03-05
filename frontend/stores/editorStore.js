@@ -62,7 +62,7 @@ var _offset = 0;
 
 var _selectedKey = null;
 
-_loadComposition(JSON.stringify(defaultComposition));
+//_loadComposition(JSON.stringify(defaultComposition));
 
 
 function _loadComposition(compoString) {
@@ -161,9 +161,9 @@ var EditorStore = new Store(Dispatcher);
 
 EditorStore.__onDispatch = function(payload) {
   switch (payload.actionType) {
-    case EditorConstants.CREATE_COMPOSITION:
-    case EditorConstants.UPDATE_COMPOSITION:
-    case EditorConstants.LOAD_COMPOSITION:
+    case CompositionConstants.CREATE_COMPOSITION:
+    case CompositionConstants.UPDATE_COMPOSITION:
+    case CompositionConstants.LOAD_COMPOSITION:
       _id = payload.composition.id;
       _user_id = payload.composition.user_id;
       _title = payload.composition.title;
@@ -173,7 +173,7 @@ EditorStore.__onDispatch = function(payload) {
       this.__emitChange();
       break;
 
-    case EditorConstants.NEW_COMPOSITION:
+    case CompositionConstants.NEW_COMPOSITION:
       _id = -1;
       _user_id = null;
       _title = "Untitled";

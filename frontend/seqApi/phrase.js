@@ -1,4 +1,3 @@
-var Util = require('./util.js');
 var Note = require('./note.js');
 
 //////////////
@@ -150,7 +149,7 @@ Phrase.prototype._changeNote = function(originalNote, newNote) {
 Phrase.prototype._findNote = function(targetNote) {
   for (var i = 0, l = this.notes.length; i < l; i++) {
     var note = this.notes[i];
-    if (targetNote._eq(note)) {
+    if (targetNote.eq(note)) {
       return i;
     }
   }
@@ -165,14 +164,14 @@ Phrase.prototype._validateNote = function(testNote) {
 
 Phrase.prototype._checkOverlap = function(testNote) {
   this.notes.forEach(function(note) {
-    if (testNote._isOverlapping(note) ) {
+    if (testNote.isOverlapping(note) ) {
       throw new NoteOverlapException(testNote, note);
     }
   });
 };
 
 Phrase.prototype._checkBoundary = function(testNote) {
-  if (testNote._end() >= this.length || testNote.position < 0) {
+  if (testNote.end() >= this.length || testNote.position < 0) {
     throw new NoteOutOfBoundsException(testNote, this.length);
   }
 };

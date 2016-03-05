@@ -1,14 +1,14 @@
 var SynthRunner = require('./synthRunner');
 var EditorStore = require('../stores/editorStore');
+var PlaybackStore = require('../stores/playbackStore');
 var PlaybackActions = require('../actions/playbackActions');
 
-var audio = new window.AudioContext();
-var masterTrack = audio.createGain();
-masterTrack.gain.value = .25;
-masterTrack.connect(audio.destination);
+var _audio = new window.AudioContext();
+var _masterTrack = _audio.createGain();
+_masterTrack.gain.value = 0.25;
+_masterTrack.connect(_audio.destination);
 
-var _lookAhead = 0.1;
-var _interval = 0.1;
+var _lookAhead = 0.05;
 
 function Playback() {
   this.channels = [];
@@ -20,7 +20,8 @@ function Playback() {
   this.nextNoteTime = 0;
   this.isPlaying = false;
 
-  this.listener = EditorStore.addListener(this.onChange.bind(this));
+  EditorStore.addListener(this.onCompositionChange.bind(this));
+  PlaybackStore.addListener(this.onPlaybackChange.bind(this));
 
   this.patternLoop = false;
 }
@@ -31,8 +32,8 @@ Playback.prototype.panic = function() {
   });
 };
 
-Playback.prototype.onChange = function() {
-  if (this.patterns) {
+Playback.prototype.onCompositionChange = function() {
+  if (this.composition) {
 
     if (this.channels.length !== this.composition.tracks.length) {
       this.populateTracks();
@@ -43,7 +44,29 @@ Playback.prototype.onChange = function() {
       channel.gain.value = this.composition.tracks[idx].volume;
     }, this);
   }
+};
 
+Playback.prototype.onPlaybackChange = function() {
+  if (PlaybackStore.shouldLoad()) {
+    this.loadComposition(EditorStore.composition());
+  }
+
+  if (PlaybackStore.demoPitch()) {
+    this.demoVoiceOn(PlaybackStore.demoPitch());
+  } else {
+    this.demoVoiceOff();
+  }
+
+  if (PlaybackStore.isPlaying()) {
+    this.play();
+  } else {
+    this.stop();
+  }
+
+  if (PlaybackStore.isStopped()) {
+    this.stop();
+    this.rewind();
+  }
 };
 
 Playback.prototype.disconnectChannels = function() {
@@ -53,8 +76,8 @@ Playback.prototype.disconnectChannels = function() {
   this.channels = [];
 };
 
-Playback.prototype.loadComposition = function() {
-  this.composition = EditorStore.composition();
+Playback.prototype.loadComposition = function(composition) {
+  this.composition = composition;
   this.sequence = this.composition.sequence;
   this.patterns = this.composition.patterns;
   this.settings = this.composition.settings;
@@ -66,10 +89,10 @@ Playback.prototype.populateTracks = function() {
   this.disconnectChannels();
 
   this.synthRunners = this.composition.tracks.map(function(track, idx) {
-    this.channels[idx] = audio.createGain();
-    this.channels[idx].connect(audio.destination);
+    this.channels[idx] = _audio.createGain();
+    this.channels[idx].connect(_audio.destination);
     this.channels[idx].gain.value = track.volume;
-    return new SynthRunner(track, audio, this.channels[idx]);
+    return new SynthRunner(track, _audio, this.channels[idx]);
   }, this);
 
   this.seqPosition = 0;
@@ -78,23 +101,22 @@ Playback.prototype.populateTracks = function() {
 
 Playback.prototype.play = function() {
   if (!this.isPlaying) {
-    this.nextNoteTime = audio.currentTime;
+    this.nextNoteTime = _audio.currentTime;
     this.isPlaying = true;
     this.buildPlaybackQueue();
-    this.intervalId = window.setInterval(this._scheduler.bind(this), _interval);
-  }
-};
 
-Playback.prototype.pause = function() {
-  this.panic();
-  if (this.isPlaying) {
-    this.isPlaying = false;
-    window.clearInterval(this.intervalId);
+    window.requestAnimationFrame(this.scheduler.bind(this));
   }
 };
 
 Playback.prototype.stop = function() {
-  this.pause();
+  if (this.isPlaying) {
+    this.panic();
+    this.isPlaying = false;
+  }
+};
+
+Playback.prototype.rewind = function() {
   this.currentTick = 0;
 };
 
@@ -112,7 +134,9 @@ Playback.prototype.demoVoiceOff = function() {
   }
 };
 
-Playback.prototype._incrementTick = function() {
+Playback.prototype.incrementTick = function() {
+  PlaybackActions.tick(this.currentTick);
+
   this.tickDuration =  60 / this.settings.tempo / this.settings.tpb;
   this.nextNoteTime += this.tickDuration;
   this.currentTick++;
@@ -125,11 +149,10 @@ Playback.prototype._incrementTick = function() {
     }
   }
 
-  PlaybackActions.tick();
 };
 
-Playback.prototype. _scheduler = function() {
-  while (this.nextNoteTime < audio.currentTime + _lookAhead) {
+Playback.prototype. scheduler = function() {
+  while (this.nextNoteTime < _audio.currentTime + _lookAhead) {
     this.playbackQueues.forEach(function(playbackQueue, trackIdx) {
       if (playbackQueue[this.currentTick]) {
         var idx = 0;
@@ -145,7 +168,11 @@ Playback.prototype. _scheduler = function() {
     }, this);
 
 
-    this._incrementTick();
+    this.incrementTick();
+  }
+
+  if (this.isPlaying) {
+    window.requestAnimationFrame(this.scheduler.bind(this));
   }
 };
 

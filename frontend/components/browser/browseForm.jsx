@@ -3,7 +3,7 @@ var History = require('react-router').hashHistory;
 var ConfirmationModal = require('../util/confirmationModal');
 var BrowserStore = require('../../stores/browserStore');
 var BrowserActions = require('../../actions/browserActions');
-var EditorActions = require('../../actions/editorActions');
+var CompositionActions = require('../../actions/compositionActions');
 var CompositionList = require('./compositionList');
 
 var BrowseForm = React.createClass({
@@ -58,7 +58,7 @@ var BrowseForm = React.createClass({
 
   confirmLoad: function(e) {
     e.preventDefault();
-    EditorActions.loadComposition(BrowserStore.selectedId());
+    CompositionActions.loadComposition(BrowserStore.selectedId());
     History.replace("");
   },
 
