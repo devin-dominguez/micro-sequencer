@@ -1,10 +1,11 @@
 var Dispatcher = require('../dispatcher/dispatcher');
 var Store = require('flux/utils').Store;
 var EditorConstants = require('../constants/editorConstants');
+var CompositionConstants = require('../constants/compositionConstants');
 
 var Composition = require('../seqApi/composition');
 
-window.defaultComposition = {
+var defaultComposition = {
   settings: {
     tempo: 125,
     hilite: 4,
@@ -16,42 +17,20 @@ window.defaultComposition = {
       type: "sawtooth",
       attackTime: 0.05,
       decayTime: 0.075,
-      sustainLevel: 0.25,
-      releaseTime: 0.1,
-      volume: 0.15,
-      pan: 0,
-    },
-
-    {
-      type: "sawtooth",
-      attackTime: 0.01,
-      decayTime: 0.075,
-      sustainLevel: 0.25,
-      releaseTime: 0.1,
-      volume: 0.15,
-      pan: 0,
-    },
-
-    {
-      type: "square",
-      attackTime: 0.01,
-      decayTime: 0.075,
-      sustainLevel: 0.25,
+      sustainLevel: 0.5,
       releaseTime: 0.1,
       volume: 0.15,
       pan: 0,
     }
   ],
 
-  sequence: [3],
+  sequence: [0],
 
   patterns: {
-    3: {
-      length: 64,
+    0: {
+      length: 128,
       phrases: [
-        {length: 64},
-        {length: 64},
-        {length: 64}
+        {length: 128}
       ]
     }
   }
@@ -83,7 +62,7 @@ var _offset = 0;
 
 var _selectedKey = null;
 
-_loadComposition(JSON.stringify(window.defaultComposition));
+_loadComposition(JSON.stringify(defaultComposition));
 
 
 function _loadComposition(compoString) {
@@ -189,6 +168,16 @@ EditorStore.__onDispatch = function(payload) {
       _user_id = payload.composition.user_id;
       _title = payload.composition.title;
       _loadComposition(payload.composition.composition);
+      _resetCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.NEW_COMPOSITION:
+      _id = -1;
+      _user_id = null;
+      _title = "Untitled";
+      _loadComposition(JSON.stringify(defaultComposition));
       _resetCells();
       _populateNoteCells();
       this.__emitChange();

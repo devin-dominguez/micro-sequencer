@@ -24,7 +24,8 @@ class Api::CompositionsController < ApplicationController
     @composition = Composition.new(composition_params)
 
     if current_user
-      if @composition.user_id
+      if @composition.user_id &&
+        @composition.user_id != current_user.id
 
         @composition.original = @composition.id
         compositions = current_user.compositions

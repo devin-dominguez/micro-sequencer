@@ -1,65 +1,7 @@
 var Dispatcher = require('../dispatcher/dispatcher');
 var EditorConstants = require('../constants/editorConstants');
-var BrowserActions = require('./browserActions');
 
 module.exports = {
-  loadComposition: function(compositionId) {
-    var ajaxOptions = {
-      url: "api/compositions/" +  compositionId,
-      type: "GET",
-      success: function(composition) {
-        var successAction = {
-          actionType: EditorConstants.LOAD_COMPOSITION,
-          composition: composition
-        };
-      Dispatcher.dispatch(successAction);
-      }
-    };
-
-    $.ajax(ajaxOptions);
-  },
-
-  createComposition: function (compositionData) {
-    var ajaxOptions = {
-      url: "api/compositions/",
-      type: "POST",
-      data: {composition: compositionData},
-      success: function(composition) {
-        var successAction = {
-          actionType: EditorConstants.CREATE_COMPOSITION,
-          composition: composition
-        };
-      Dispatcher.dispatch(successAction);
-      BrowserActions.receiveCompositions(true);
-    }
-    };
-
-    $.ajax(ajaxOptions);
-  },
-
-  updateComposition: function (compositionData, userId) {
-    var that = this;
-    var ajaxOptions = {
-      url: "api/compositions/" + userId + "/save",
-      type: "PATCH",
-      data: {composition: compositionData},
-      success: function(composition) {
-        if (composition.clone) {
-          that.createComposition(compositionData);
-        } else {
-          var successAction = {
-            actionType: EditorConstants.UPDATE_COMPOSITION,
-            composition: composition
-          };
-        Dispatcher.dispatch(successAction);
-        BrowserActions.receiveCompositions(true);
-        }
-      },
-    };
-
-    $.ajax(ajaxOptions);
-  },
-
   addTrack: function() {
     Dispatcher.dispatch({
       actionType: EditorConstants.ADD_TRACK

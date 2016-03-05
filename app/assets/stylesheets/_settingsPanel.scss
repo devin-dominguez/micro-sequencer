@@ -9,6 +9,7 @@
   display: flex;
   justify-content: space-between;
   padding: 5px;
+  min-height: 48px;
 }
 
 .playback-buttons {
@@ -93,6 +94,7 @@
 .track-editor {
   padding: 8px;
   display: flex;
+  min-height: 130px;
   flex-direction: column;
 
   border: 1px dashed $grid-color;

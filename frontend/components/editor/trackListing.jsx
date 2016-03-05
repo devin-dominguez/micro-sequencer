@@ -42,13 +42,14 @@ var TrackListing = React.createClass({
     EditorActions.updateSynth(this.props.trackIdx, newState);
   },
 
-  onDoubleClick: function(e) {
+  onClick: function(e) {
     e.preventDefault();
     EditorActions.selectTrack(this.props.trackIdx);
   },
 
   onClickRemoveTrack: function(e) {
     e.preventDefault();
+    e.stopPropagation();
     this.setState({
       isConfirming: true
     });
@@ -56,6 +57,7 @@ var TrackListing = React.createClass({
 
   confirmRemoveTrack: function(e) {
     e.preventDefault();
+    e.stopPropagation();
     if (EditorStore.composition().tracks.length === 1) {
       EditorActions.addTrack();
     }
@@ -67,9 +69,15 @@ var TrackListing = React.createClass({
 
   cancelRemoveTrack: function(e) {
     e.preventDefault();
+    e.stopPropagation();
     this.setState({
       isConfirming: false
     });
+  },
+
+  preventDefault: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
   },
 
   render: function() {
@@ -86,7 +94,7 @@ var TrackListing = React.createClass({
 
     return (
       <div className={"track-listing " + className}
-        onDoubleClick={this.onDoubleClick}
+        onClick={this.onClick}
       >
         <div className="track-header">
           <h4>{"Track " + (this.props.trackIdx + 1)}</h4>
@@ -104,6 +112,7 @@ var TrackListing = React.createClass({
             max="0.25"
             value={this.state.volume}
             onChange={this.synthParamChange.bind(this, "volume")}
+            onClick={this.preventDefault}
           />
         </div>
         {confirmationModal}
