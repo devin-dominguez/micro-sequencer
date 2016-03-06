@@ -12,34 +12,20 @@ var defaultComposition = {
     tpb: 4
   },
 
-  tracks: [
-    {
-      type: "sawtooth",
-      attackTime: 0.05,
-      decayTime: 0.075,
-      sustainLevel: 0.5,
-      releaseTime: 0.1,
-      volume: 0.15,
-      pan: 0,
-    }
-  ],
+  tracks: [ {}, {}, {}, {}],
 
   sequence: [0],
 
   patterns: {
     0: {
       length: 128,
-      phrases: [
-        {length: 128}
-      ]
+      phrases: [{length: 128}, {length: 128}, {length: 128}, {length: 128}]
     }
   }
 };
 
 var _title = "Untitled";
 var _public = true;
-var _id = -1;
-var _user_id = null;
 
 var _composition;
 var _currentSeqIdx;
@@ -92,7 +78,6 @@ function _resetCells() {
   _endPosition = null;
 }
 
-// TODO populate selected in note cells and add appropriate prop then
 function _populateNoteCells() {
   _noteCells = {};
 
@@ -136,11 +121,16 @@ function _populateDestinationCellsForMove() {
     var note = _selectedNotes[noteKey];
     var newPitch = note.pitch + (_endPitch - _startPitch);
     var newPosition = note.position + (_endPosition - _startPosition);
+    var valid = newPosition >= 0 &&
+     (newPosition + note.duration - 1) < _currentPhrase.length;
+
     var newKey = newPitch * _currentPhrase.length + newPosition;
+
     _destinationCells[newKey] = {
       pitch: newPitch,
       position: newPosition,
-      duration: note.duration
+      duration: note.duration,
+      valid: valid
     };
   }, this);
 }
@@ -150,11 +140,15 @@ function _populateDestinationCellsForResize() {
   Object.keys(_selectedNotes).forEach(function(noteKey) {
     var note = _selectedNotes[noteKey];
     var newDuration = note.duration + (_endPosition - _startPosition);
+    var valid = newDuration > 0 &&
+      (note.position + newDuration - 1) < _currentPhrase.length;
+
     var newKey = note.pitch * _currentPhrase.length + note.position;
     _destinationCells[newKey] = {
       pitch: note.pitch,
       position: note.position,
-      duration: newDuration
+      duration: newDuration,
+      valid: valid
     };
   }, this);
 }
@@ -315,8 +309,6 @@ EditorStore.__onDispatch = function(payload) {
     case CompositionConstants.CREATE_COMPOSITION:
     case CompositionConstants.UPDATE_COMPOSITION:
     case CompositionConstants.LOAD_COMPOSITION:
-      _id = payload.composition.id;
-      _user_id = payload.composition.user_id;
       _title = payload.composition.title;
       _loadComposition(payload.composition.composition);
       _resetCells();
@@ -325,8 +317,6 @@ EditorStore.__onDispatch = function(payload) {
       break;
 
     case CompositionConstants.NEW_COMPOSITION:
-      _id = -1;
-      _user_id = null;
       _title = "Untitled";
       _loadComposition(JSON.stringify(defaultComposition));
       _resetCells();
@@ -384,7 +374,6 @@ EditorStore.__onDispatch = function(payload) {
 
 EditorStore.compositionData = function() {
   return {
-    user_id: _user_id,
     title: _title,
     "public": _public,
     composition: JSON.stringify(_composition)
@@ -420,10 +409,6 @@ EditorStore.destinationCells = function() {
 EditorStore.numSelected = function() {
   return Object.keys(_selectedNotes).length;
 },
-
-EditorStore.id = function() {
-  return _id;
-};
 
 EditorStore.selectedKey = function() {
   return _selectedKey;

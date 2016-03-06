@@ -20,64 +20,47 @@ class Api::CompositionsController < ApplicationController
     end
   end
 
+
   def create
-    @composition = Composition.new(composition_params)
-
-    if current_user
-      if @composition.user_id &&
-        @composition.user_id != current_user.id
-
-        @composition.original = @composition.id
-        compositions = current_user.compositions
-        @composition.title += " CLONE"
-        while compositions.find_by_title(@composition.title)
-          @composition.title += " CLONE"
-        end
-      end
-      @composition.user_id = current_user.id
-    else
-      render json: ["forbidden"], status: :forbidden
-      return
+    unless current_user
+      render json: {errors:["not logged in"]}, status: :forbidden
     end
 
+    @composition = Composition.new(composition_params)
+    @composition.user_id = current_user.id
+
     if @composition.save
-      render :show, status: :created
+      render :show, status: :ok
     else
-      render json: ["something went really wrong"],
-        status: :unprocessable_entity
+      render json: {errors:["creation failed"]}, status: :unprocessable_entity
     end
   end
 
   def update
-    user_id = params[:user_id].to_i
-    title = params[:composition][:title]
-    if user_id != current_user.id
-      render json: ["forbidden"], status: :forbidden
+    unless current_user
+      render json: {errors:["not logged in"]}, status: :forbidden
       return
     end
-    @composition = Composition.find_by(user_id: user_id, title: title)
 
+    title = composition_params[:title]
+    compositions = current_user.compositions
+
+    @composition = compositions.find_by(title: title)
     unless @composition
-      render json: ["not found"], status: :note_found
-      return
-    end
-
-    if @composition.user_id != current_user.id
-      render json: {clone: true}, status: :ok
+      render json: {errors:["composition not found"]}, status: :not_found
       return
     end
 
     if @composition.update(composition_params)
-      render :show, status: :ok
+      render :show
     else
-      render json: ["update failed"], status: :unprocessable_entity
+      render json: {errors:["update failed"]}, status:  :unprocessable_entity
     end
   end
-
 
   private
 
   def composition_params
-    params.require(:composition).permit(:user_id, :title, :public, :composition)
+    params.require(:composition).permit(:title, :public, :composition)
   end
 end

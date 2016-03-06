@@ -35,32 +35,28 @@ module.exports = {
           actionType: CompositionConstants.CREATE_COMPOSITION,
           composition: composition
         };
-      Dispatcher.dispatch(successAction);
-      BrowserActions.receiveCompositions(true);
+        Dispatcher.dispatch(successAction);
+        BrowserActions.receiveCompositions(true);
       }
     };
 
     $.ajax(ajaxOptions);
   },
 
-  updateComposition: function (compositionData, userId) {
+  updateComposition: function (compositionData) {
     var that = this;
     var ajaxOptions = {
-      url: "api/compositions/" + userId + "/save",
+      url: "api/compositions/",
       type: "PATCH",
       data: {composition: compositionData},
       success: function(composition) {
-        if (composition.clone) {
-          that.createComposition(compositionData);
-        } else {
-          var successAction = {
-            actionType: CompositionConstants.UPDATE_COMPOSITION,
-            composition: composition
-          };
+        var successAction = {
+          actionType: CompositionConstants.UPDATE_COMPOSITION,
+          composition: composition
+        };
         Dispatcher.dispatch(successAction);
         BrowserActions.receiveCompositions(true);
-        }
-      },
+      }
     };
 
     $.ajax(ajaxOptions);

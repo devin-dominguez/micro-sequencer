@@ -48,8 +48,7 @@ var SaveForm = React.createClass({
     e.preventDefault();
     var compositionData = EditorStore.compositionData();
     compositionData.title = this.state.title;
-    CompositionActions.updateComposition(compositionData,
-        SessionStore.currentUser().id);
+    CompositionActions.updateComposition(compositionData);
     History.replace("");
   },
 

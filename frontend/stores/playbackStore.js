@@ -20,6 +20,8 @@ PlaybackStore.__onDispatch =  function(payload) {
     case CompositionConstants.CREATE_COMPOSITION:
     case CompositionConstants.UPDATE_COMPOSITION:
     case CompositionConstants.NEW_COMPOSITION:
+      _isPlaying = false;
+      _isStopped = true;
       _shouldLoad = true;
       this.__emitChange();
       break;

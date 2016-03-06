@@ -29,7 +29,10 @@ var SessionForm = React.createClass({
     if (SessionStore.isLoggedIn()) {
       History.replace("");
     } else {
-      this.setState({errors: SessionStore.errors()});
+      this.setState({
+        errors: SessionStore.errors(),
+        password: ''
+      });
     }
   },
 
