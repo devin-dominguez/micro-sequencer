@@ -40,6 +40,12 @@ Phrase.prototype.removeNote = function(pitch, position) {
   return note;
 };
 
+Phrase.prototype.removeNotes = function(notes) {
+  notes.forEach(function(note) {
+    this.removeNote(note.pitch, note.position);
+  }, this);
+};
+
 Phrase.prototype.transposeNoteTo = function(pitch, position, newPitch) {
   var originalNote = this.notes[pitch * this.length + position];
   var newNote = new Note(originalNote);
@@ -100,6 +106,19 @@ Phrase.prototype.resizeNoteBy = function(pitch, position, offset) {
   return newNote;
 };
 
+Phrase.prototype.resizeNotesBy = function(notes, offset) {
+  var newNotes = [];
+  notes.forEach(function(note) {
+    var originalNote = this.notes[note.pitch * this.length + note.position];
+    var newNote = new Note(originalNote);
+    newNote.duration += offset;
+
+    newNotes.push(newNote);
+  }, this);
+
+  return this._changeNotes(notes, newNotes);
+};
+
 Phrase.prototype.moveNoteTo = function(pitch, position, newPitch, newPosition) {
   var originalNote = this.notes[pitch * this.length + position];
   var newNote = new Note(originalNote);
@@ -109,6 +128,34 @@ Phrase.prototype.moveNoteTo = function(pitch, position, newPitch, newPosition) {
   this._changeNote(pitch, position, newNote);
 
   return newNote;
+};
+
+Phrase.prototype.moveNotesBy = function(notes, pitchOffset, positionOffset) {
+  var newNotes = [];
+  notes.forEach(function(note) {
+    var originalNote = this.notes[note.pitch * this.length + note.position];
+    var newNote = new Note(originalNote);
+    newNote.pitch += pitchOffset;
+    newNote.position += positionOffset;
+
+    newNotes.push(newNote);
+  }, this);
+
+  return this._changeNotes(notes, newNotes);
+};
+
+Phrase.prototype.copyNotesBy = function(notes, pitchOffset, positionOffset) {
+  var newNotes = [];
+  notes.forEach(function(note) {
+    var originalNote = this.notes[note.pitch * this.length + note.position];
+    var newNote = new Note(originalNote);
+    newNote.pitch += pitchOffset;
+    newNote.position += positionOffset;
+
+    newNotes.push(newNote);
+  }, this);
+
+  return this._changeNotes([], newNotes);
 };
 
 Phrase.prototype.copyNoteTo = function(pitch, position, newPitch, newPosition) {
@@ -142,10 +189,40 @@ Phrase.prototype._changeNote = function(pitch, position, newNote) {
   }
 };
 
+Phrase.prototype._changeNotes = function(notes, newNotes) {
+  var originalNotes = [];
+  notes.forEach(function(note) {
+    originalNotes.push(this.removeNote(note.pitch, note.position));
+  }, this);
+
+  var success = newNotes.every(function(note) {
+    try {
+      this._validateNote(note);
+      return true;
+    } catch(e) {
+      return false;
+    }
+  }, this);
+
+  if (success) {
+    newNotes.forEach(function(note) {
+      this.insertNote(note);
+    }, this);
+    return newNotes;
+  } else {
+    originalNotes.forEach(function(note) {
+      this.insertNote(note);
+    }, this);
+    return originalNotes;
+
+  }
+};
 
 Phrase.prototype._validateNote = function(testNote) {
   this._checkBoundary(testNote);
   this._checkOverlap(testNote);
+  testNote.checkPitch(testNote.pitch);
+  testNote.checkDuration(testNote.duration);
 };
 
 Phrase.prototype._checkOverlap = function(testNote) {

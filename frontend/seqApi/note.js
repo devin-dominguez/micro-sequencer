@@ -5,9 +5,9 @@ var Config = require('./config.js');
 //////////////
 
 function Note(options) {
-  this.pitch = this._checkPitch(options.pitch);
+  this.pitch = this.checkPitch(options.pitch);
   this.position = options.position;
-  this.duration = this._checkDuration(options.duration);
+  this.duration = this.checkDuration(options.duration);
 }
 
 ///////////////
@@ -39,7 +39,7 @@ Note.prototype.eq = function(otherNote) {
   );
 };
 
-Note.prototype._checkDuration = function(duration) {
+Note.prototype.checkDuration = function(duration) {
   if (duration >= 1) {
     return 0 | duration;
   } else {
@@ -47,7 +47,7 @@ Note.prototype._checkDuration = function(duration) {
   }
 };
 
-Note.prototype._checkPitch = function(pitch) {
+Note.prototype.checkPitch = function(pitch) {
   if ( pitch >= Config.MIN_PITCH && pitch <= Config.MAX_PITCH) {
     return 0 | pitch;
   } else {

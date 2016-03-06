@@ -173,57 +173,83 @@ var PianoRoll = React.createClass({
 
   onDoubleClick: function(e) {
     e.preventDefault();
-    if (this.currentCell.note) {
-      EditorActions.removeNote(this.currentCell.note.pitch,
-          this.currentCell.note.position);
-    } else {
-      EditorActions.insertNote({
-        pitch: this.currentPitch,
-        position: this.currentPosition,
-        duration: 1
-      });
+    if (!e.shiftKey) {
+      if (this.currentCell.note) {
+        EditorActions.removeNote(this.currentCell.note.pitch,
+            this.currentCell.note.position);
+      } else {
+        EditorActions.insertNote({
+          pitch: this.currentPitch,
+          position: this.currentPosition,
+          duration: 1
+        });
+      }
     }
   },
 
-  onMouseDown: function(e) {
+  onClick: function(e) {
     e.preventDefault();
+
     if (!this.currentCell.note) {
       return false;
     }
 
-    EditorActions.selectNote(this.currentCell.note, this.currentPosition);
+    if (e.shiftKey) {
+      if (!this.currentCell.selected) {
+        EditorActions.selectNote(this.currentCell.note);
+      } else {
+        EditorActions.deselectNote(this.currentCell.note);
+      }
+    } 
+  },
 
-    if (!this.onTail) {
-      this.moveDrag = true;
-      this.canvas.style.cursor = "move";
-      EditorActions.dragNoteOverCell(this.currentPitch, this.currentPosition);
+  onMouseDown: function(e) {
+    e.preventDefault();
+
+    if (!this.currentCell.note) {
+      EditorActions.clearNoteSelection();
+      return false;
     }
-    if (this.onTail) {
-      this.resizeDrag = true;
-      EditorActions.dragNoteOverCellForResize(this.currentPosition);
+    if (!e.shiftKey && EditorStore.numSelected() <= 1) {
+      EditorActions.clearNoteSelection();
+      EditorActions.selectNote(this.currentCell.note);
+    }
+
+    if (!this.moveDrag && !this.resizeDrag) {
+      if (!this.onTail) {
+        this.moveDrag = true;
+        this.canvas.style.cursor = "move";
+        EditorActions.startMoveDrag(this.currentPitch, this.currentPosition);
+      }
+
+      else  {
+        this.resizeDrag = true;
+        EditorActions.startResizeDrag(this.currentPosition);
+      }
     }
   },
 
   onMouseUp: function(e) {
-    if (this.moveDrag) {
-      EditorActions.moveNoteTo(this.currentPitch,
-          this.currentPosition);
+    if (this.moveDrag && this.dragging) {
+      EditorActions.completeMoveDrag(e.ctrlKey);
     }
     if (this.resizeDrag) {
-      EditorActions.resizeNoteTo(this.currentPosition);
+      EditorActions.completeResizeDrag();
     }
+    this.dragging = false;
     this.moveDrag = false;
     this.resizeDrag = false;
-    this.copyDrag = false;
     this.canvas.style.cursor = "crosshair";
   },
 
   onEnterNewCell: function() {
     if (this.moveDrag) {
-      EditorActions.dragNoteOverCell(this.currentPitch, this.currentPosition);
+      this.dragging = true;
+      EditorActions.continueMoveDrag(this.currentPitch, this.currentPosition);
     }
     if (this.resizeDrag) {
-      EditorActions.dragNoteOverCellForResize(this.currentPosition);
+      this.dragging = true;
+      EditorActions.continueResizeDrag(this.currentPosition);
     }
   },
 

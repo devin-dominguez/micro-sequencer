@@ -53,12 +53,16 @@ var _currentPhrase;
 
 var _error = "";
 
-var _cells = [];
 var _noteCells = {};
 var _selectedCells = {};
 var _destinationCells = {};
-var _selectedNote = null;
-var _offset = 0;
+
+var _selectedNotes = {};
+
+var _startPitch = null;
+var _startPosition = null;
+var _endPitch = null;
+var _endPosition = null;
 
 var _selectedKey = null;
 
@@ -74,25 +78,28 @@ function _loadComposition(compoString) {
   _currentPhrase = _currentPattern.phrases[_currentTrackIdx];
 }
 
-function _cellKey(pitch, position) {
-  return pitch * _currentPhrase.length + position;
-}
-
 function _resetCells() {
   _noteCells = {};
   _selectedCells = {};
   _destinationCells = {};
-  _selectedNote = null;
+
+  _selectedNotes = {};
   _offset = 0;
+
+  _startPitch = null;
+  _startPosition = null;
+  _endPitch = null;
+  _endPosition = null;
 }
 
+// TODO populate selected in note cells and add appropriate prop then
 function _populateNoteCells() {
   _noteCells = {};
 
   Object.keys(_currentPhrase.notes).forEach(function(noteKey) {
     var note = _currentPhrase.notes[noteKey];
     for (var tick = 0; tick < note.duration; tick++) {
-      var key = _cellKey(note.pitch, note.position) + tick;
+      var key = note.pitch * _currentPhrase.length + note.position + tick;
       _noteCells[key] = {
         note: note,
         pitch: note.pitch,
@@ -102,41 +109,94 @@ function _populateNoteCells() {
   });
 }
 
-function _setSelectedNote(note, position) {
-  _selectedNote = note;
-  _offset = position - note.position;
-}
-
-function _populateSelectedCells() {
-  var note = _selectedNote;
-  _selectedCells = {};
-  for (var tick = 0; tick < note.duration; tick++) {
-    var key = _cellKey(note.pitch, note.position) + tick;
-    _selectedCells[key] = true;
+function _toggleSelectedNote(note) {
+  var key = note.pitch * _currentPhrase.length + note.position;
+  if (_selectedNotes[key]) {
+    delete _selectedNotes[key];
+  } else {
+    _selectedNotes[key] = note;
   }
 }
 
-function _populateDestinationCells(pitch, position) {
-  _destinationCells = {};
-  var headPos = Math.min(_currentPhrase.length -_selectedNote.duration,
-      Math.max(position - _offset, 0));
-  var key = _cellKey(pitch, headPos);
-  _destinationCells[key] = {
-    pitch: pitch,
-    position: headPos,
-    duration: _selectedNote.duration
-  };
+function _populateSelectedCells() {
+  _selectedCells = {};
+  Object.keys(_selectedNotes).forEach(function(noteKey) {
+    var note = _selectedNotes[noteKey];
+    for (var tick = 0; tick < note.duration; tick++) {
+      var key = note.pitch * _currentPhrase.length + note.position + tick;
+      _selectedCells[key] = true;
+    }
+  }, this);
+
 }
 
-function _populateDestinationCellsForResize(endPosition) {
+function _populateDestinationCellsForMove() {
   _destinationCells = {};
-  var newDuration = endPosition - _selectedNote.position + 1;
-  var key = _cellKey(_selectedNote.pitch, _selectedNote.position);
-  _destinationCells[key] = {
-    pitch: _selectedNote.pitch,
-    position: _selectedNote.position,
-    duration: Math.max(1, newDuration)
-  };
+  Object.keys(_selectedNotes).forEach(function(noteKey) {
+    var note = _selectedNotes[noteKey];
+    var newPitch = note.pitch + (_endPitch - _startPitch);
+    var newPosition = note.position + (_endPosition - _startPosition);
+    var newKey = newPitch * _currentPhrase.length + newPosition;
+    _destinationCells[newKey] = {
+      pitch: newPitch,
+      position: newPosition,
+      duration: note.duration
+    };
+  }, this);
+}
+
+function _populateDestinationCellsForResize() {
+  _destinationCells = {};
+  Object.keys(_selectedNotes).forEach(function(noteKey) {
+    var note = _selectedNotes[noteKey];
+    var newDuration = note.duration + (_endPosition - _startPosition);
+    var newKey = note.pitch * _currentPhrase.length + note.position;
+    _destinationCells[newKey] = {
+      pitch: note.pitch,
+      position: note.position,
+      duration: newDuration
+    };
+  }, this);
+}
+
+function _resizeSelectedNotes() {
+  var durationOffset = _endPosition - _startPosition;
+  var notes = Object.keys(_selectedNotes).map(function(noteKey) {
+    return note = _selectedNotes[noteKey];
+  });
+
+  var resultNotes = _currentPhrase.resizeNotesBy(notes, durationOffset);
+  _resetCells();
+
+  _selectedNotes = {};
+  resultNotes.forEach(function(note) {
+    var key = note.pitch * _currentPhrase.length + note.position;
+    _selectedNotes[key] = note;
+  });
+
+}
+
+function _moveSelectedNotes(copying) {
+  var pitchOffset = _endPitch - _startPitch;
+  var positionOffset = _endPosition - _startPosition;
+
+  var notes = Object.keys(_selectedNotes).map(function(noteKey) {
+    return note = _selectedNotes[noteKey];
+  });
+
+  if (copying) {
+    var resultNotes = _currentPhrase.copyNotesBy(notes, pitchOffset, positionOffset);
+  } else {
+    var resultNotes = _currentPhrase.moveNotesBy(notes, pitchOffset, positionOffset);
+  }
+  _resetCells();
+
+  _selectedNotes = {};
+  resultNotes.forEach(function(note) {
+    var key = note.pitch * _currentPhrase.length + note.position;
+    _selectedNotes[key] = note;
+  });
+
 }
 
 function _updateSynth(trackIdx, newParams) {
@@ -159,6 +219,99 @@ var EditorStore = new Store(Dispatcher);
 
 EditorStore.__onDispatch = function(payload) {
   switch (payload.actionType) {
+    case EditorConstants.INSERT_NOTE:
+      _currentPhrase.insertNote(payload.note);
+      _resetCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.REMOVE_NOTE:
+      _currentPhrase.removeNote(payload.pitch, payload.position);
+      _resetCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.SELECT_NOTE:
+      var key = payload.note.pitch * _currentPhrase.length + payload.note.position;
+      _selectedNotes[key] = payload.note;
+      _populateSelectedCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.DESELECT_NOTE:
+      var key = payload.note.pitch * _currentPhrase.length + payload.note.position;
+      delete _selectedNotes[key];
+      _populateSelectedCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.TOGGLE_NOTE_SELECTION:
+      _toggleSelectedNote(payload.note);
+      _populateSelectedCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.CLEAR_NOTE_SELECTION:
+      _selectedNotes = {};
+      _populateSelectedCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.START_MOVE_DRAG:
+      _startPitch = payload.startPitch;
+      _startPosition = payload.startPosition;
+      _endPitch = payload.startPitch;
+      _endPosition = payload.endPosition;
+      this.__emitChange();
+      break;
+
+    case EditorConstants.CONTINUE_MOVE_DRAG:
+      _endPitch = payload.endPitch;
+      _endPosition = payload.endPosition;
+      _populateDestinationCellsForMove();
+      _populateSelectedCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.COMPLETE_MOVE_DRAG:
+      _moveSelectedNotes(payload.copying);
+      _populateSelectedCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.START_RESIZE_DRAG:
+      _startPitch = 0;
+      _startPosition = payload.startPosition;
+      _endPitch = 0;
+      _endPosition = payload.endPosition;
+      this.__emitChange();
+      break;
+
+    case EditorConstants.CONTINUE_RESIZE_DRAG:
+      _endPitch = 0;
+      _endPosition = payload.endPosition;
+      _populateDestinationCellsForResize();
+      _populateSelectedCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+    case EditorConstants.COMPLETE_RESIZE_DRAG:
+      _resizeSelectedNotes();
+      _populateSelectedCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
+
+
     case CompositionConstants.CREATE_COMPOSITION:
     case CompositionConstants.UPDATE_COMPOSITION:
     case CompositionConstants.LOAD_COMPOSITION:
@@ -209,76 +362,6 @@ EditorStore.__onDispatch = function(payload) {
              Math.max(0, payload.trackIdx)));
       _resetCells();
       _populateNoteCells();
-      this.__emitChange();
-      break;
-
-    case EditorConstants.INSERT_NOTE:
-      _error = "";
-      try {
-        _currentPhrase.insertNote(payload.noteParams);
-      } catch (error) {
-        _error = error.message;
-      }
-      _resetCells();
-      _populateNoteCells();
-      this.__emitChange();
-      break;
-
-    case EditorConstants.REMOVE_NOTE:
-      _error = "";
-      try {
-        _currentPhrase.removeNote(payload.pitch, payload.position);
-      } catch (error) {
-        _error = error.message;
-      }
-      _resetCells();
-      _populateNoteCells();
-      this.__emitChange();
-      break;
-
-    case EditorConstants.MOVE_NOTE_TO:
-      _error = "";
-      try {
-        _currentPhrase.moveNoteTo(
-            _selectedNote.pitch, _selectedNote.position,
-            payload.pitch,
-            Math.min(_currentPhrase.length - _selectedNote.duration,
-              Math.max(0, payload.position - _offset)));
-      } catch (error) {
-        _error = error.message;
-      }
-      _resetCells();
-      _populateNoteCells();
-      this.__emitChange();
-      break;
-
-    case EditorConstants.REISZE_NOTE_TO:
-      _error = "";
-      try {
-        _currentPhrase.resizeNoteTo(_selectedNote.pitch,
-            _selectedNote.position,
-            Math.max(1, payload.endPosition - _selectedNote.position + 1));
-      } catch (error) {
-        _error = error.message;
-      }
-      _resetCells();
-      _populateNoteCells();
-      this.__emitChange();
-      break;
-
-    case EditorConstants.SELECT_NOTE:
-      _setSelectedNote(payload.noteParams, payload.cellPosition);
-      _populateSelectedCells();
-      this.__emitChange();
-      break;
-
-    case EditorConstants.DRAG_NOTE_OVER_CELL:
-      _populateDestinationCells(payload.cellPitch, payload.cellPosition);
-      this.__emitChange();
-      break;
-
-    case EditorConstants.DRAG_NOTE_OVER_CELL_FOR_RESIZE:
-      _populateDestinationCellsForResize(payload.cellPosition);
       this.__emitChange();
       break;
 
@@ -333,6 +416,10 @@ EditorStore.destinationCells = function() {
     return _destinationCells[key];
   });
 };
+
+EditorStore.numSelected = function() {
+  return Object.keys(_selectedNotes).length;
+},
 
 EditorStore.id = function() {
   return _id;

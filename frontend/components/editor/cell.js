@@ -17,30 +17,25 @@ function Cell(params) {
 Cell.prototype.draw = function(ctx) {
   ctx.globalAlpha = 0.75;
   if (this.note) {
-    if (this.selected) {
-      ctx.globalAlpha = 0.25;
-    }
 
     this.drawNoteBody(ctx);
     this.drawNoteTail(ctx);
   }
-
-};
-
-Cell.prototype.drawSelected = function(ctx) {
-    ctx.strokeStyle = config.GRID_COLOR;
-
-    ctx.fillRect(this.x, this.y, config.CELL_WIDTH, config.CELL_HEIGHT);
-    ctx.strokeRect(this.x, this.y, config.CELL_WIDTH, config.CELL_HEIGHT);
 };
 
 Cell.prototype.drawNoteBody = function(ctx) {
 
   if (this.note.position === this.position) {
-    ctx.fillStyle = config.NOTE_COLOR;
 
+    ctx.fillStyle = config.NOTE_COLOR;
     ctx.fillRect(this.x + 1, this.y + 1,
         config.CELL_WIDTH * this.note.duration - 2, config.CELL_HEIGHT - 2);
+
+    if (this.selected) {
+      ctx.strokeStyle = config.SELECT_COLOR;
+      ctx.strokeRect(this.x + 1, this.y + 1,
+          config.CELL_WIDTH * this.note.duration - 2, config.CELL_HEIGHT - 2);
+    }
   }
 };
 
