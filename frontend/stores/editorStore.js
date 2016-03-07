@@ -322,6 +322,7 @@ EditorStore.__onDispatch = function(payload) {
     case CompositionConstants.CREATE_COMPOSITION:
     case CompositionConstants.UPDATE_COMPOSITION:
     case CompositionConstants.LOAD_COMPOSITION:
+      console.log(payload.composition);
       _title = payload.composition.title;
       _public = payload.composition.public;
       _loadComposition(payload.composition.composition);
