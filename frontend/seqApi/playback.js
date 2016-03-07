@@ -102,7 +102,6 @@ Playback.prototype.populateTracks = function() {
 
 Playback.prototype.play = function() {
   if (!this.isPlaying) {
-    this.currentTick = 0;
     this.nextNoteTime = _audio.currentTime;
     this.isPlaying = true;
     this.buildPlaybackQueue();
