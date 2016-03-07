@@ -31,6 +31,7 @@ Voice.prototype._connect = function() {
 };
 
 Voice.prototype._disconnect = function() {
+  this.osc.stop = this.osc.stop || this.osc.noteOff;
   this.osc.stop(0);
   this.osc.disconnect();
   this.amp.disconnect();
@@ -44,6 +45,8 @@ Voice.prototype._noteOn = function(synth, freq, time) {
   time += 0.0125;
   this.amp.gain.setValueAtTime(0, time);
   this.osc.type = synth.type;
+
+  this.osc.start = this.osc.start || this.osc.noteOn;
   this.osc.start(time);
 
   this.osc.frequency.setValueAtTime(freq, time);

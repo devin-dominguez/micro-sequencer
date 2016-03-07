@@ -3,7 +3,8 @@ var EditorStore = require('../stores/editorStore');
 var PlaybackStore = require('../stores/playbackStore');
 var PlaybackActions = require('../actions/playbackActions');
 
-var _audio = new window.AudioContext();
+var audio = window.AudioContext || window.webkitAudioContext;
+var _audio = new audio();
 var _masterTrack = _audio.createGain();
 _masterTrack.gain.value = 0.25;
 _masterTrack.connect(_audio.destination);
