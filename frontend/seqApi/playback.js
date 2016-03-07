@@ -10,6 +10,7 @@ _masterTrack.gain.value = 0.25;
 _masterTrack.connect(_audio.destination);
 
 var _lookAhead = 0.05;
+var _interval = 0.1;
 
 function Playback() {
   this.channels = [];
@@ -102,6 +103,7 @@ Playback.prototype.populateTracks = function() {
 
 Playback.prototype.play = function() {
   if (!this.isPlaying) {
+    this.currentTick = 0;
     this.nextNoteTime = _audio.currentTime;
     this.isPlaying = true;
     this.buildPlaybackQueue();
@@ -175,7 +177,8 @@ Playback.prototype.scheduler = function() {
   }
 
   if (this.isPlaying) {
-    window.requestAnimationFrame(this.scheduler.bind(this));
+    window.setTimeout(this.scheduler.bind(this), _interval * 1000);
+    //window.requestAnimationFrame(this.scheduler.bind(this));
   }
 };
 
