@@ -25,7 +25,7 @@ var defaultComposition = {
 };
 
 var _title = "Untitled Composition";
-var _public = true;
+var _public = false;
 
 var _composition;
 var _currentSeqIdx;
@@ -332,6 +332,7 @@ EditorStore.__onDispatch = function(payload) {
 
     case CompositionConstants.NEW_COMPOSITION:
       _title = "Untitled Composition";
+      _public = false;
       _loadComposition(JSON.stringify(defaultComposition));
       _resetCells();
       _populateNoteCells();
