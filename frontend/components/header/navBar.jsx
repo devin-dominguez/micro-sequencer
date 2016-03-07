@@ -69,6 +69,11 @@ var NavBar = React.createClass({
     });
   },
 
+  onAboutClick: function(e) {
+    e.preventDefault();
+    History.replace("about");
+  },
+
   render: function() {
     var saveButton = this.state.loggedIn ?
       <li><button className="button"
@@ -104,6 +109,9 @@ var NavBar = React.createClass({
           <li><button className="button"
             onClick={this.onSettingsClick}
           >Settings</button></li>
+          <li><button className="button"
+            onClick={this.onAboutClick}
+          >About</button></li>
           <li><SessionButton loggedIn={this.state.loggedIn}/></li>
         </ul>
         {confirmationModal}

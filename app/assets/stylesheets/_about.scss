@@ -1,0 +1,41 @@
+@import "variables";
+
+.about-content {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+  border: 1px dotted $grid-color;
+  border-right: none;
+  max-height: 66vh;
+
+  font-size: 1.125em;
+  line-height: 1.65em;
+  text-align: justify;
+
+  ul {
+    list-style-type: circle;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 8px 0;
+  }
+
+  h3 {
+    margin: 4px 0;
+  }
+
+  span {
+    display: inline;
+  }
+}
+
+.about-buttons {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

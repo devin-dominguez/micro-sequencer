@@ -10,6 +10,7 @@ var BrowseModal = require('./components/browser/browseModal');
 var LoadModal = require('./components/browser/loadModal');
 var SaveModal = require('./components/browser/saveModal');
 var SettingsModal = require('./components/editor/settingsModal');
+var AboutModal = require('./components/aboutModal');
 
 var SessionActions = require('./actions/sessionActions');
 var CompositionActions = require('./actions/compositionActions');
@@ -24,6 +25,7 @@ var routes = (
     <Route component={LoadModal} path="load" />
     <Route component={SaveModal} path="save" />
     <Route component={SettingsModal} path="settings" />
+    <Route component={AboutModal} path="about" />
 
   </Route>
 );
@@ -31,6 +33,10 @@ var routes = (
   var playback = new Playback();
   SessionActions.recieveCurrentUser();
   CompositionActions.newComposition();
+  History.replace("about");
+  window.onbeforeunload = function() {
+    return "Any unsaved changes will be lost";
+  };
 
 $(function() {
   var contentElement = $("#content")[0];
