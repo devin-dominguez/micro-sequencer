@@ -10,7 +10,6 @@ _masterTrack.gain.value = 0.25;
 _masterTrack.connect(_audio.destination);
 
 var _lookAhead = 0.05;
-var _interval = 0.1;
 
 function Playback() {
   this.channels = [];
@@ -177,8 +176,7 @@ Playback.prototype.scheduler = function() {
   }
 
   if (this.isPlaying) {
-    window.setTimeout(this.scheduler.bind(this), _interval * 1000);
-    //window.requestAnimationFrame(this.scheduler.bind(this));
+    window.requestAnimationFrame(this.scheduler.bind(this));
   }
 };
 
