@@ -51,6 +51,5 @@ module.exports = {
       compositionId: compositionId
     });
   }
-
 };
 

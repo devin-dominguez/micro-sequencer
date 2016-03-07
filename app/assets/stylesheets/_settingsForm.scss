@@ -1,0 +1,39 @@
+@import 'variables';
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+
+  label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+
+  input[type=number] {
+    margin-left: 16px;
+    background-color: $bg-color;
+    border: 1px solid $fg-color;
+    text-align: right;
+    color: $fg-color;
+    width: 48px;
+  }
+
+  .button.delete-button {
+      color: $error-color * 2;
+      background-color: $bg-color;
+    &:hover {
+      color: $fg-color;
+      background-color: $error-color;
+    }
+  }
+}

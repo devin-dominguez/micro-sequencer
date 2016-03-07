@@ -1,4 +1,5 @@
 var React = require('react');
+var EditorStore = require('../stores/editorStore');
 
 var Header = require('./header/header');
 var Footer = require('./footer');
@@ -11,6 +12,26 @@ var BrowseForm = require('./browser/browseForm');
 
 var App = React.createClass({
 
+  getInitialState: function() {
+    return {
+      title: EditorStore.title()
+    };
+  },
+
+  componentDidMount: function() {
+    this.editorListener = EditorStore.addListener(this.onChange);
+  },
+
+  componentWillUnmount: function() {
+    this.editorListener.remove();
+  },
+
+  onChange: function() {
+    this.setState({
+      title: EditorStore.title()
+    });
+  },
+
   render: function() {
     return (
       <div className="app">
@@ -19,6 +40,7 @@ var App = React.createClass({
       <div className="editor">
 
         <div className="settings panel">
+          <h3 className="composition-title">{this.state.title}</h3>
           <Transport />
           <TrackList />
           <TrackEditor />

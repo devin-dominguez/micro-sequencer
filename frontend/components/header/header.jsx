@@ -1,6 +1,6 @@
 var React = require('react');
-
 var NavBar = require('./navBar');
+
 var Header = React.createClass({
 
   render: function() {

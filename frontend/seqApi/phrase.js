@@ -241,14 +241,16 @@ Phrase.prototype._checkBoundary = function(testNote) {
 };
 
 Phrase.prototype._removeInvalidNotes = function() {
+  var newNotes = {};
   Object.keys(this.notes).forEach(function(noteKey) {
     var note = this.notes[noteKey];
     try {
-      this._validateNote(note);
-    } catch (e) {
-      delete this.notes[noteKey];
-    }
+      this._checkBoundary(note);
+    } catch (e) { }
+      var newKey = note.pitch * this.length + note.position;
+      newNotes[newKey] = note;
   }, this);
+  this.notes = newNotes;
 };
 
 

@@ -24,7 +24,7 @@ var defaultComposition = {
   }
 };
 
-var _title = "Untitled";
+var _title = "Untitled Composition";
 var _public = true;
 
 var _composition;
@@ -70,7 +70,6 @@ function _resetCells() {
   _destinationCells = {};
 
   _selectedNotes = {};
-  _offset = 0;
 
   _startPitch = null;
   _startPosition = null;
@@ -156,7 +155,7 @@ function _populateDestinationCellsForResize() {
 function _resizeSelectedNotes() {
   var durationOffset = _endPosition - _startPosition;
   var notes = Object.keys(_selectedNotes).map(function(noteKey) {
-    return note = _selectedNotes[noteKey];
+    return _selectedNotes[noteKey];
   });
 
   var resultNotes = _currentPhrase.resizeNotesBy(notes, durationOffset);
@@ -175,7 +174,7 @@ function _moveSelectedNotes(copying) {
   var positionOffset = _endPosition - _startPosition;
 
   var notes = Object.keys(_selectedNotes).map(function(noteKey) {
-    return note = _selectedNotes[noteKey];
+    return _selectedNotes[noteKey];
   });
 
   if (copying) {
@@ -191,6 +190,20 @@ function _moveSelectedNotes(copying) {
     _selectedNotes[key] = note;
   });
 
+}
+
+function _updateCompositionSettings(newParams) {
+  if (typeof newParams.public !== "undefined") {
+    _public = newParams.public;
+  }
+
+
+  _composition.settings.tpb = Number(newParams.tpb) || _composition.settings.tpb;
+  _composition.settings.hilite = Number(newParams.hilite) || _composition.settings.hilite;
+
+  if (typeof newParams.length !== "undefined") {
+    _currentPattern.resize(Number(newParams.length));
+  }
 }
 
 function _updateSynth(trackIdx, newParams) {
@@ -310,6 +323,7 @@ EditorStore.__onDispatch = function(payload) {
     case CompositionConstants.UPDATE_COMPOSITION:
     case CompositionConstants.LOAD_COMPOSITION:
       _title = payload.composition.title;
+      _public = payload.composition.public;
       _loadComposition(payload.composition.composition);
       _resetCells();
       _populateNoteCells();
@@ -317,7 +331,7 @@ EditorStore.__onDispatch = function(payload) {
       break;
 
     case CompositionConstants.NEW_COMPOSITION:
-      _title = "Untitled";
+      _title = "Untitled Composition";
       _loadComposition(JSON.stringify(defaultComposition));
       _resetCells();
       _populateNoteCells();
@@ -369,6 +383,13 @@ EditorStore.__onDispatch = function(payload) {
       _updateSynth(payload.trackIdx, payload.synthParams);
       this.__emitChange();
       break;
+
+    case EditorConstants.UPDATE_COMPOSITION_SETTINGS:
+      _updateCompositionSettings(payload.newParams);
+      _resetCells();
+      _populateNoteCells();
+      this.__emitChange();
+      break;
   }
 };
 
@@ -408,7 +429,7 @@ EditorStore.destinationCells = function() {
 
 EditorStore.numSelected = function() {
   return Object.keys(_selectedNotes).length;
-},
+};
 
 EditorStore.selectedKey = function() {
   return _selectedKey;
@@ -421,7 +442,6 @@ EditorStore.error = function() {
 EditorStore.composition = function() {
   return _composition;
 };
-
 
 EditorStore.phrase = function() {
   return _currentPhrase;
@@ -446,6 +466,18 @@ EditorStore.track = function(trackIdx) {
 
 EditorStore.tempo = function() {
   return _composition.settings.tempo;
+};
+
+EditorStore.tpb = function() {
+  return _composition.settings.tpb;
+};
+
+EditorStore.hilite = function() {
+  return _composition.settings.hilite;
+};
+
+EditorStore.isPublic = function() {
+  return _public;
 };
 
 module.exports = EditorStore;

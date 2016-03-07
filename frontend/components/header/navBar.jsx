@@ -42,6 +42,11 @@ var NavBar = React.createClass({
     History.replace("save");
   },
 
+  onSettingsClick: function(e) {
+    e.preventDefault();
+    History.replace("settings");
+  },
+
   onNewClick: function(e) {
     e.preventDefault();
     this.setState({
@@ -88,14 +93,17 @@ var NavBar = React.createClass({
     return (
       <nav className='nav-bar'>
         <ul>
-          {saveButton}
-          {loadButton}
           <li><button className="button"
             onClick={this.onNewClick}
           >New</button></li>
+          {saveButton}
+          {loadButton}
           <li><button className="button"
             onClick={this.onBrowseClick}
           >Browse</button></li>
+          <li><button className="button"
+            onClick={this.onSettingsClick}
+          >Settings</button></li>
           <li><SessionButton loggedIn={this.state.loggedIn}/></li>
         </ul>
         {confirmationModal}

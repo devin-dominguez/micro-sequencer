@@ -79,8 +79,9 @@ var PianoRoll = React.createClass({
     }
 
     for (var x = 0; x < this.state.length + 1; x++) {
-      ctx.globalAlpha = x % 4  === 0 ? 1 : 0.25;
-      ctx.strokeStyle = x % 16 === 0 ? config.GRID_BAR_COLOR : config.GRID_COLOR;
+      ctx.globalAlpha = x % EditorStore.tpb()  === 0 ? 1 : 0.25;
+      ctx.strokeStyle = x % (EditorStore.hilite() * EditorStore.tpb()) === 0 ?
+        config.GRID_BAR_COLOR : config.GRID_COLOR;
       ctx.beginPath();
       ctx.moveTo(x * config.CELL_WIDTH, 0);
       ctx.lineTo(x * config.CELL_WIDTH, height);

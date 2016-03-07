@@ -121,9 +121,11 @@ Playback.prototype.rewind = function() {
 };
 
 Playback.prototype.demoVoiceOn = function(pitch) {
-  var trackIdx = EditorStore.currentTrackIdx();
-  this.demoVoiceOff();
-  this.demoVoice = this.synthRunners[trackIdx].noteOn(pitch);
+  if (!this.demoVoice) {
+    var trackIdx = EditorStore.currentTrackIdx();
+    this.demoVoiceOff();
+    this.demoVoice = this.synthRunners[trackIdx].noteOn(pitch);
+  }
 };
 
 Playback.prototype.demoVoiceOff = function() {
@@ -151,7 +153,7 @@ Playback.prototype.incrementTick = function() {
 
 };
 
-Playback.prototype. scheduler = function() {
+Playback.prototype.scheduler = function() {
   while (this.nextNoteTime < _audio.currentTime + _lookAhead) {
     this.playbackQueues.forEach(function(playbackQueue, trackIdx) {
       if (playbackQueue[this.currentTick]) {

@@ -25,7 +25,7 @@ module.exports = {
     });
   },
 
-  createComposition: function (compositionData) {
+  createComposition: function(compositionData) {
     var ajaxOptions = {
       url: "api/compositions/",
       type: "POST",
@@ -43,8 +43,7 @@ module.exports = {
     $.ajax(ajaxOptions);
   },
 
-  updateComposition: function (compositionData) {
-    var that = this;
+  updateComposition: function(compositionData) {
     var ajaxOptions = {
       url: "api/compositions/",
       type: "PATCH",
@@ -53,6 +52,23 @@ module.exports = {
         var successAction = {
           actionType: CompositionConstants.UPDATE_COMPOSITION,
           composition: composition
+        };
+        Dispatcher.dispatch(successAction);
+        BrowserActions.receiveCompositions(true);
+      }
+    };
+
+    $.ajax(ajaxOptions);
+  },
+
+  deleteComposition: function(compositionData) {
+    var ajaxOptions = {
+      url: "api/compositions/",
+      type: "DELETE",
+      data: {composition: compositionData},
+      success: function() {
+        var successAction = {
+          actionType: CompositionConstants.DELETE_COMPOSITION,
         };
         Dispatcher.dispatch(successAction);
         BrowserActions.receiveCompositions(true);

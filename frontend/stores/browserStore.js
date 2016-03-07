@@ -53,7 +53,6 @@ BrowserStore.__onDispatch = function(payload) {
       break;
 
     case BrowserConstants.BROWSER_ERROR:
-      console.log(payload.errors);
       break;
   }
 };

@@ -3,14 +3,14 @@ var EditorConstants = require('../constants/editorConstants');
 
 module.exports = {
 
-  insertNote(note) {
+  insertNote: function(note) {
     Dispatcher.dispatch({
       actionType: EditorConstants.INSERT_NOTE,
       note: note
     });
   },
 
-  removeNote(pitch, position) {
+  removeNote: function(pitch, position) {
     Dispatcher.dispatch({
       actionType: EditorConstants.REMOVE_NOTE,
       pitch: pitch,
@@ -18,34 +18,34 @@ module.exports = {
     });
   },
 
-  toggleNoteSelection(note) {
+  toggleNoteSelection: function(note) {
     Dispatcher.dispatch({
       actionType: EditorConstants.TOGGLE_NOTE_SELECTION,
       note: note
     });
   },
 
-  selectNote(note) {
+  selectNote: function(note) {
     Dispatcher.dispatch({
       actionType: EditorConstants.SELECT_NOTE,
       note: note
     });
   },
 
-  deselectNote(note) {
+  deselectNote: function(note) {
     Dispatcher.dispatch({
       actionType: EditorConstants.DESELECT_NOTE,
       note: note
     });
   },
 
-  clearNoteSelection() {
+  clearNoteSelection: function() {
     Dispatcher.dispatch({
       actionType: EditorConstants.CLEAR_NOTE_SELECTION,
     });
   },
 
-  startMoveDrag(startPitch, startPosition) {
+  startMoveDrag: function(startPitch, startPosition) {
     Dispatcher.dispatch({
       actionType: EditorConstants.START_MOVE_DRAG,
       startPitch: startPitch,
@@ -53,7 +53,7 @@ module.exports = {
     });
   },
 
-  continueMoveDrag(endPitch, endPosition) {
+  continueMoveDrag: function(endPitch, endPosition) {
     Dispatcher.dispatch({
       actionType: EditorConstants.CONTINUE_MOVE_DRAG,
       endPitch: endPitch,
@@ -61,28 +61,28 @@ module.exports = {
     });
   },
 
-  completeMoveDrag(copying) {
+  completeMoveDrag: function(copying) {
     Dispatcher.dispatch({
       actionType: EditorConstants.COMPLETE_MOVE_DRAG,
       copying: copying
     });
   },
 
-  startResizeDrag(startPosition) {
+  startResizeDrag: function(startPosition) {
     Dispatcher.dispatch({
       actionType: EditorConstants.START_RESIZE_DRAG,
       startPosition: startPosition
     });
   },
 
-  continueResizeDrag(endPosition) {
+  continueResizeDrag: function(endPosition) {
     Dispatcher.dispatch({
       actionType: EditorConstants.CONTINUE_RESIZE_DRAG,
       endPosition: endPosition
     });
   },
 
-  completeResizeDrag() {
+  completeResizeDrag: function() {
     Dispatcher.dispatch({
       actionType: EditorConstants.COMPLETE_RESIZE_DRAG
     });
@@ -117,9 +117,17 @@ module.exports = {
   },
 
   setTempo: function(tempo) {
+    tempo = Math.min(320, Math.max(30, tempo));
     Dispatcher.dispatch({
       actionType: EditorConstants.SET_TEMPO,
       tempo: tempo
+    });
+  },
+
+  updateCompositionSettings: function(newParams) {
+    Dispatcher.dispatch({
+      actionType: EditorConstants.UPDATE_COMPOSITION_SETTINGS,
+      newParams: newParams
     });
   },
 

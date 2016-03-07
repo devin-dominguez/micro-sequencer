@@ -9,11 +9,9 @@ var SessionModal = require('./components/session/sessionModal');
 var BrowseModal = require('./components/browser/browseModal');
 var LoadModal = require('./components/browser/loadModal');
 var SaveModal = require('./components/browser/saveModal');
+var SettingsModal = require('./components/editor/settingsModal');
 
 var SessionActions = require('./actions/sessionActions');
-var EditorActions = require('./actions/editorActions');
-var PlaybackActions = require('./actions/playbackActions');
-var BrowserActions = require('./actions/browserActions');
 var CompositionActions = require('./actions/compositionActions');
 
 
@@ -25,6 +23,8 @@ var routes = (
     <Route component={BrowseModal} path="browse" />
     <Route component={LoadModal} path="load" />
     <Route component={SaveModal} path="save" />
+    <Route component={SettingsModal} path="settings" />
+
   </Route>
 );
 
@@ -37,14 +37,3 @@ $(function() {
 
   ReactDOM.render(<Router history={History}>{routes}</Router>, contentElement);
 });
-
-window.SessionStore = require('./stores/sessionStore');
-
-window.EditorStore = require('./stores/editorStore');
-window.EditorActions = EditorActions;
-
-window.PlaybackStore = require('./stores/playbackStore');
-window.PlaybackActions = PlaybackActions;
-
-window.BrowserStore = require('./stores/browserStore');
-window.BrowserActions = BrowserActions;

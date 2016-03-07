@@ -4,12 +4,19 @@
   flex-direction: column;
 }
 
+.composition-title {
+ width: 200px;
+ overflow-wrap: break-word;
+ word-wrap: break-word;
+}
+
 .transport {
   border: 1px dashed $grid-color;
   display: flex;
   justify-content: space-between;
   padding: 5px;
   min-height: 48px;
+  margin-top: 16px;
 }
 
 .playback-buttons {

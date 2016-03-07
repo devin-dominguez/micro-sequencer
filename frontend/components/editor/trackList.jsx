@@ -1,5 +1,6 @@
 var React = require('react');
 var EditorStore = require('../../stores/editorStore');
+var EditorActions = require('../../actions/editorActions');
 var TrackListing = require('./trackListing');
 
 var TrackList = React.createClass({

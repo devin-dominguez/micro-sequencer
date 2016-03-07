@@ -58,6 +58,28 @@ class Api::CompositionsController < ApplicationController
     end
   end
 
+  def destroy
+    unless current_user
+      render json: {errors:["not logged in"]}, status: :forbidden
+      return
+    end
+
+    title = composition_params[:title]
+    compositions = current_user.compositions
+
+    @composition = compositions.find_by(title: title)
+
+    unless @composition
+      render json: {errors:["composition not found"]}, status: :not_found
+      return
+    end
+
+    if @composition.destroy
+      render json: ["composition deleted"], status: :ok
+    end
+
+  end
+
   private
 
   def composition_params
