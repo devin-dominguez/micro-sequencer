@@ -246,9 +246,9 @@ Phrase.prototype._removeInvalidNotes = function() {
     var note = this.notes[noteKey];
     try {
       this._checkBoundary(note);
-    } catch (e) { }
       var newKey = note.pitch * this.length + note.position;
       newNotes[newKey] = note;
+    } catch (e) { }
   }, this);
   this.notes = newNotes;
 };
