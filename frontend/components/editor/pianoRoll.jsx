@@ -232,7 +232,7 @@ var PianoRoll = React.createClass({
 
   onMouseUp: function(e) {
     if (this.moveDrag && this.dragging) {
-      EditorActions.completeMoveDrag(e.ctrlKey);
+      EditorActions.completeMoveDrag(e.altKey);
     }
     if (this.resizeDrag) {
       EditorActions.completeResizeDrag();

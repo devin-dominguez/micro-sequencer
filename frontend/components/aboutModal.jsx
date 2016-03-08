@@ -29,7 +29,7 @@ var AboutModal = React.createClass({
           <li>SHIFT-click on a cell to toggle its selection</li>
           <li>Drag a note to move it around the matrix</li>
           <li>Drag from the far right of a note to resize it</li>
-          <li>CTRL-drag a note to duplicate it</li>
+          <li>ALT-drag a note to duplicate it</li>
         </ul>
         <h3>Track Editor</h3>
         <ul>
