@@ -5,6 +5,8 @@ var SessionStore = require('../../stores/sessionStore');
 var ConfirmationModal = require('../util/confirmationModal');
 var CompositionActions = require('../../actions/compositionActions');
 
+var Tour = require('../../tour');
+
 var NavBar = React.createClass({
   getInitialState: function() {
     return {
@@ -103,16 +105,19 @@ var NavBar = React.createClass({
           >New</button></li>
           {saveButton}
           {loadButton}
-          <li><button className="button"
+          <li><button className="button browse-button"
             onClick={this.onBrowseClick}
           >Browse</button></li>
           <li><button className="button"
             onClick={this.onSettingsClick}
           >Settings</button></li>
-          <li><button className="button"
+          <li><button className="button about-button"
             onClick={this.onAboutClick}
           >About</button></li>
           <li><SessionButton loggedIn={this.state.loggedIn}/></li>
+          <li><button className="button tour-button"
+            onClick={Tour.start.bind(Tour)}
+          >Tour</button></li>
         </ul>
         {confirmationModal}
       </nav>

@@ -15,6 +15,8 @@ var AboutModal = require('./components/aboutModal');
 var SessionActions = require('./actions/sessionActions');
 var CompositionActions = require('./actions/compositionActions');
 
+var Tour = require('./tour');
+
 
 var Playback = require('./seqApi/playback');
 
@@ -30,16 +32,18 @@ var routes = (
   </Route>
 );
 
-  var playback = new Playback();
-  SessionActions.recieveCurrentUser();
-  CompositionActions.newComposition();
-  History.replace("about");
-  window.onbeforeunload = function() {
-    return "Any unsaved changes will be lost";
-  };
+var playback = new Playback();
+SessionActions.recieveCurrentUser();
+CompositionActions.newComposition();
+//History.replace("about");
+window.onbeforeunload = function() {
+  return "Any unsaved changes will be lost";
+};
 
 $(function() {
   var contentElement = $("#content")[0];
 
   ReactDOM.render(<Router history={History}>{routes}</Router>, contentElement);
+
+  Tour.start();
 });
